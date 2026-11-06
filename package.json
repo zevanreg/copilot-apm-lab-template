@@ -1,0 +1,33 @@
+{
+  "name": "copilot-apm-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An Azure Repos hands-on lab for GitHub Copilot users learning APM.",
+  "type": "module",
+  "engines": {
+    "node": ">=24.11.0"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "start": "node app/src/start.ts",
+    "start:built": "node dist/start.js",
+    "setup:context": "node scripts/materialize-context.mjs",
+    "test": "npm run test:baseline",
+    "test:baseline": "node --test app/test/baseline.test.ts",
+    "test:acceptance": "node --test app/test/acceptance.test.ts",
+    "test:tools": "node --test scripts/test/lab.test.mjs",
+    "test:lab": "node scripts/test-lab.mjs",
+    "check:docs": "node scripts/check-docs.mjs",
+    "check": "npm run typecheck && npm run build && npm run test:baseline && npm run test:tools && npm run check:docs",
+    "verify:starter": "node scripts/verify.mjs starter",
+    "verify:authoring": "node scripts/verify.mjs authoring",
+    "verify:reuse": "node scripts/verify.mjs reuse",
+    "verify:graduation": "npm run check && npm run test:acceptance && node scripts/verify.mjs graduation"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.0",
+    "typescript": "5.9.3",
+    "yaml": "2.9.0"
+  }
+}

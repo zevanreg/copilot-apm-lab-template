@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.tools/
+.lab/
+.apm-local/
+.tsupgrader/
+**/apm_modules/
+**/build/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+
+
+# APM dependencies
+apm_modules/

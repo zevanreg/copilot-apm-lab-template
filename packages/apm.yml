@@ -1,0 +1,9 @@
+name: northstar-second-consumer
+version: 1.0.0
+description: Independent Copilot consumer for the package-reuse exercise.
+targets:
+  - copilot
+includes: []
+dependencies:
+  apm:
+    - path: ./webhook-playbook

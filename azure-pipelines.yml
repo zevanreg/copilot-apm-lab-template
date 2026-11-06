@@ -1,0 +1,46 @@
+trigger:
+  branches:
+    include:
+      - main
+      - lab/*
+
+# Azure Repos PR validation is configured with a branch-policy build validation.
+pr: none
+
+parameters:
+  - name: requireAcceptance
+    displayName: Require completed application and lab graduation
+    type: boolean
+    default: false
+
+pool:
+  vmImage: windows-latest
+
+steps:
+  - checkout: self
+    clean: true
+    fetchDepth: 1
+
+  - task: NodeTool@0
+    displayName: Use Node.js 24 LTS
+    inputs:
+      versionSpec: 24.x
+      checkLatest: false
+
+  - task: PowerShell@2
+    displayName: Validate APM packages, documentation, and application
+    inputs:
+      targetType: filePath
+      filePath: scripts\ci.ps1
+      arguments: -RequireAcceptance:$${{ parameters.requireAcceptance }}
+      pwsh: true
+
+  - publish: $(Build.SourcesDirectory)\.lab\reports
+    artifact: lab-validation
+    displayName: Publish explicit validation mode and outcome
+    condition: always()
+
+  - publish: $(Build.SourcesDirectory)\.lab\release\build
+    artifact: northstar-webhook-kit
+    displayName: Publish the self-contained context package
+    condition: succeeded()

@@ -1,0 +1,8 @@
+name: northstar-bundle-consumer
+version: 1.0.0
+description: Empty Copilot project for verifying a self-contained release bundle.
+targets:
+  - copilot
+includes: []
+dependencies:
+  apm: []

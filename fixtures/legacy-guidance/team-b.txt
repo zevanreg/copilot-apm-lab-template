@@ -1,0 +1,9 @@
+INERT DISCUSSION MATERIAL - NOT A COPILOT INSTRUCTION
+
+Team B's copied guidance:
+Retry deliveries should return the original dispatch.
+Return 200 on an identical repeat, and 409 on an identifier conflict.
+Validate before changing state.
+
+Discussion: neither text file is authoritative. The reviewed delivery contract
+and executable acceptance tests define this lab's required behavior.

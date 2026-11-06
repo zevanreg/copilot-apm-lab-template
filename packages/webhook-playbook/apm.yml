@@ -1,0 +1,7 @@
+name: webhook-playbook
+version: 1.0.0
+description: Copilot guidance for making and reviewing Northstar webhook changes.
+includes: auto
+dependencies:
+  apm:
+    - path: ../engineering-baseline

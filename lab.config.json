@@ -1,0 +1,6 @@
+{
+  "apmVersion": "0.35.0",
+  "apmWindowsArchive": "apm-windows-x86_64.zip",
+  "apmWindowsSha256": "9a0a912b3ba68ac154b940e1931425c85f03edcfcc2339661d3aa32d8fa17c2f",
+  "nodeMajor": 24
+}

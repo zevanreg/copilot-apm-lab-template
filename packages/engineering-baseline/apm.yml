@@ -1,0 +1,6 @@
+name: engineering-baseline
+version: 1.0.0
+description: Small, reusable Northstar engineering standards.
+includes: auto
+dependencies:
+  apm: []

@@ -1,0 +1,6 @@
+INERT DISCUSSION MATERIAL - NOT A COPILOT INSTRUCTION
+
+Team A's copied guidance:
+Every webhook delivery creates a dispatch.
+Always return 201 for a valid payload.
+There is no need to test repeated events.

@@ -1,0 +1,5 @@
+name: northstar-lab-review-policy
+version: "1.0"
+enforcement: block
+manifest:
+  scripts: deny

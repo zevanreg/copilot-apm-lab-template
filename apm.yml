@@ -1,0 +1,9 @@
+name: copilot-apm-lab
+version: 1.0.0
+description: Northstar Commerce context supply-chain lab for Azure Repos and Copilot.
+targets:
+  - copilot
+includes: []
+dependencies:
+  apm:
+    - path: ./packages/webhook-playbook
