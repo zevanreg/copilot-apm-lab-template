@@ -20,7 +20,7 @@ dependencies:
     .github/prompts/review-webhook.prompt.md: sha256:1c57b300b7d98426ee98efa2ab3cedc05969021b8b267dae8f5cdb24df591646
   source: local
   local_path: ./packages/webhook-playbook
-  content_hash: sha256:de934adf80f25cda88988ff1c4f2c00a03b572e192ccf8a817dc7ea139a31346
+  content_hash: sha256:69f764c7c12942e35720bff8d10d1dfd14242101aea228b630975e866e0d9a01
 - repo_url: _local/engineering-baseline
   name: engineering-baseline
   version: 1.0.0
@@ -35,7 +35,7 @@ dependencies:
   local_path: ../engineering-baseline
   declaring_parent: ./packages/webhook-playbook
   anchored_local_path: packages/engineering-baseline
-  content_hash: sha256:22aea4c3105b618421ad488ca5781a186954699e13199c5c0280ecf76009153e
+  content_hash: sha256:3629e4f8cefffdf8b6595f43c2b3f99ef017a53a1cdaf5639916e92f5875b9ae
 deployments:
 - kind: project-relative
   target: copilot
