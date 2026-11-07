@@ -51,8 +51,8 @@ if ($LASTEXITCODE -ne 0) { throw 'npm restore failed.' }
 & .\scripts\ci.ps1 -RequireAcceptance:$false
 ```
 
-Expected: starter mode passes, and the summary explicitly reports
-`acceptanceRequired: false`.
+Expected: starter mode passes, and the validation log explicitly says acceptance
+and graduation remain unverified.
 
 Separately run the acceptance suite to confirm the seeded starting state:
 
@@ -81,7 +81,7 @@ the topology with the owner rather than overwriting it.
 Stage only the reviewed starter content:
 
 ```powershell
-git add -- .gitignore .gitattributes .npmrc .github .agents app docs evidence fixtures labs packages scripts README.md lab.config.json package.json package-lock.json tsconfig.json tsconfig.build.json apm.yml apm.lock.yaml apm-policy.yml azure-pipelines.yml
+git add -- .gitignore .gitattributes .npmrc .github .agents app docs fixtures labs packages scripts README.md lab.config.json package.json package-lock.json tsconfig.json tsconfig.build.json apm.yml apm.lock.yaml apm-policy.yml azure-pipelines.yml
 git --no-pager diff --cached --stat
 git --no-pager diff --cached --check
 if ($LASTEXITCODE -ne 0) { throw 'Review staged whitespace errors before publishing.' }
@@ -118,9 +118,8 @@ integration workflow when history already exists.
 5. Select `main` and the root pipeline YAML.
 6. Save/run with the acceptance parameter left **false for the starter**.
 7. Authorize the repository and agent pool if prompted.
-8. Confirm the validation summary says starter, not graduation.
-9. Confirm both published artifacts are available:
-   `lab-validation` and `northstar-webhook-kit`.
+8. Confirm the validation log says starter, not graduation.
+9. Confirm the published `northstar-webhook-kit` release artifact is available.
 
 The hosted image is Windows and the pipeline installs Node.js 24 LTS. It runs the
 same PowerShell script used locally.
@@ -162,11 +161,11 @@ Use an ordinary learner account or a clean machine:
 2. Complete [setup](../labs/00-setup.md), not a shortcut from the organizer's caches.
 3. Verify both frozen locks after relocation.
 4. Observe actual skill, prompt, and agent discovery in the approved VS Code build.
-5. Run starter CI and download both hosted artifacts.
+5. Run starter CI and inspect its log and hosted release ZIP.
 6. Complete one sample learner branch and verify a graduation-mode PR build.
 
 Do not claim remote authentication or hosted execution was verified merely
-because local commands passed. Record the build URL and environment used.
+because local commands passed. Verify the actual hosted run and its environment.
 
 ## Optional remote package distribution
 
@@ -227,7 +226,7 @@ az login --tenant YOUR_TENANT_ID
 ```
 
 Replace the placeholder before execution. Use the normal approved tenant
-selection flow; do not capture its tokens in workshop evidence.
+selection flow; do not copy its tokens into workshop files or chat.
 
 If a PAT is required, use a short-lived, narrowly scoped Code Read token, supply
 it through a process environment or approved secret store as `ADO_APM_PAT`, and

@@ -6,7 +6,7 @@ import { stringify } from "yaml";
 import {
   apmTextDigest, copyInputs, makeSandbox, managedPaths, readYaml, removeSandbox, runApm,
 } from "./lib.mjs";
-import { verifyConsumer } from "./verify.mjs";
+import { verifyConsumer, verifyGraduation } from "./verify.mjs";
 import { prepareRelease } from "./prepare-release.mjs";
 import { materializeConsumer } from "./materialize-context.mjs";
 
@@ -64,6 +64,8 @@ test("audit rejects deployed drift and materialization preserves unowned skill f
 test("frozen mode rejects source changes; a materialized consumer accepts a reviewed skill update", async (t) => {
   const directory = await sandbox(t, "source");
   await materializeConsumer(directory);
+  const second = path.join(directory, "packages");
+  await materializeConsumer(second);
   await appendFile(
     path.join(directory, "packages", "engineering-baseline", ".apm", "instructions", "engineering.instructions.md"),
     "\nHarmless local source change.\n",
@@ -73,7 +75,7 @@ test("frozen mode rejects source changes; a materialized consumer accepts a revi
   assert.match(baselineResult.output, /does not match|differs from its locked snapshot/i);
   const skill = path.join(directory, "packages", "webhook-playbook", ".apm", "skills", "webhook-change");
   await appendFile(path.join(skill, "SKILL.md"), "\nRead the [update check](./references/workflow-test.md) before handoff.\n");
-  await writeFile(path.join(skill, "references", "workflow-test.md"), "# Update check\n\nRecord actual results.\n");
+  await writeFile(path.join(skill, "references", "workflow-test.md"), "# Update check\n\nVerify the updated behavior.\n");
   const result = await runApm(["install", "--frozen"], { cwd: directory, failure: true });
   assert.match(result.output, /webhook-playbook/);
   assert.match(result.output, /does not match|differs from its locked snapshot/i);
@@ -87,6 +89,32 @@ test("frozen mode rejects source changes; a materialized consumer accepts a revi
     "The newly added skill reference must be recorded and deployed",
   );
   await runApm(["audit", "--ci", "--policy", "./apm-policy.yml"], { cwd: directory });
+
+  const packageRoot = path.join(second, "webhook-playbook");
+  const manifest = await readYaml(path.join(packageRoot, "apm.yml"));
+  manifest.version = "1.1.0";
+  await writeFile(path.join(packageRoot, "apm.yml"), stringify(manifest));
+  await writeFile(
+    path.join(skill, "references", "package-upgrade.md"),
+    "## Upgrade\n\nReview the source and install in both consumers.\n\n## Rollback\n\nRestore a reviewed source revision and regenerate both locks.\n\n## Limits\n\nIntegrity checks do not guarantee model behavior.\n",
+  );
+  await appendFile(path.join(skill, "SKILL.md"), "\nUse the [package upgrade](./references/package-upgrade.md) procedure.\n");
+  await writeFile(
+    path.join(packageRoot, ".apm", "instructions", "package-review.instructions.md"),
+    '---\ndescription: "Use when reviewing package Markdown and upgrade procedures."\napplyTo: "packages/**/*.md"\n---\nReview authored sources and installed relative links.\n',
+  );
+  await runApm(["install", "--target", "copilot"], { cwd: directory });
+  await runApm(["install", "--target", "copilot"], { cwd: second });
+  await assert.rejects(readFile(path.join(directory, "evidence", "submission.md")), { code: "ENOENT" });
+  const pipelinePath = path.join(directory, "azure-pipelines.yml");
+  const pipeline = await readYaml(pipelinePath);
+  const acceptance = pipeline.parameters.find((parameter) => parameter.name === "requireAcceptance");
+  acceptance.default = false;
+  await writeFile(pipelinePath, stringify(pipeline));
+  await assert.rejects(verifyGraduation(directory), /acceptance-gate default/);
+  acceptance.default = true;
+  await writeFile(pipelinePath, stringify(pipeline));
+  await verifyGraduation(directory);
 });
 
 test("the explicit local policy rejects an unreviewed manifest command without executing it", async (t) => {

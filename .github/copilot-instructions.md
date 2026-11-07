@@ -1,7 +1,7 @@
 # Northstar APM workshop
 
 This repository is hosted in Azure Repos. The `.github` directory is a local
-Copilot customization surface, not evidence that GitHub hosts the code.
+Copilot customization surface; GitHub does not host this repository.
 
 - Read the current lab before changing files. Follow the learner's requested scope.
 - The starter's duplicate-delivery defect is intentional. Baseline tests should
@@ -13,5 +13,5 @@ Copilot customization surface, not evidence that GitHub hosts the code.
 - Use the repository-local pinned APM wrapper, `scripts\apm.ps1`.
 - APM's local policy is passed explicitly to audit. Do not claim that a local
   policy file is automatically enforced at installation time.
-- Keep secrets out of manifests, prompts, evidence, and Git URLs.
+- Keep secrets out of manifests, prompts, documentation, and Git URLs.
 - The application is an in-memory lab, not a production webhook service.

@@ -63,8 +63,8 @@ twice on the machine that generated the locks.
 | Root bootstrap Copilot instructions | Yes | Yes | Repository-owned workshop boundaries. |
 | `apm_modules` | No | No | Derived package context restored by installation. |
 | `.tools` | No | No | Pinned local APM binary. |
-| `.lab` | No | No | Project-local APM state, scenarios, generated releases, reports. |
-| `.apm-local` | No | No | Ignored installation identity, not portable overwrite evidence. |
+| `.lab` | No | No | Project-local APM state, scenarios, and generated releases. |
+| `.apm-local` | No | No | Ignored installation identity, not portable overwrite authorization. |
 
 Reviewable deployment files do not mean every installed package is self-contained.
 Preserve package resources while agents follow their links.
@@ -91,14 +91,14 @@ project identity remains ignored. This is not a user-profile sandbox.
   reference material.
 - The review prompt is a single explicit review request.
 - The reviewer agent has read/search tools only.
-- Lab 4 adds a package-Markdown instruction and release-evidence reference.
+- Lab 4 adds a package-Markdown instruction and a package-upgrade/rollback reference.
 
 No hook, external MCP server, lifecycle script, or privileged execution tool is
 necessary. File discovery is a harness behavior; file existence and APM success
 are not substitutes for observing actual Copilot use.
 
 Opening the nested packages folder in VS Code does not guarantee isolation from
-parent Git-repository customizations. Record the observed scope, not an assumed
+parent Git-repository customizations. Verify the actual scope, not an assumed
 one.
 
 ## Install versus compile
@@ -134,7 +134,7 @@ flow. The format is deployable to Copilot through APM; Claude is not required.
 The legacy `--format apm` output is not accepted by `apm install <archive>`.
 
 An imperative bundle install does not rewrite the consumer's declaration list.
-It records deployment evidence; retain the bundle as the distribution source.
+It records deployment metadata; retain the bundle as the distribution source.
 Do not silently conflate it with a declarative, lock-replayed remote package.
 
 APM normalizes text line endings in recorded text hashes. The round-trip tests
@@ -171,9 +171,11 @@ repository is not an adversarial policy-enforcement product.
 | `npm run test:lab` | Real APM cold replay, drift, frozen source, script-policy, and bundle cases. |
 | `npm run verify:authoring` | Lab 4's agreed source/version/output structure. |
 | `npm run verify:reuse` | Same package content and deployments in two APM projects. |
-| `npm run verify:graduation` | Completed application, authoring, reuse, pipeline default, evidence, and audits. |
+| `npm run verify:graduation` | Completed application, authoring, reuse, pipeline default, and audits. |
 | Pipeline starter mode | Healthy lab scaffolding; explicitly not graduation. |
 | Pipeline graduation mode | Completed exercise plus release artifact. |
 
-Automated checks do not verify the truth of a learner's chat observations or
-Azure UI configuration. The instructor rubric includes those human-reviewed items.
+CI writes its execution mode and completion status to the normal validation log;
+the release ZIP is its only published artifact. Automated checks cannot verify
+Copilot discovery or Azure UI configuration. Inspect those directly during the
+workshop and PR review.

@@ -20,32 +20,32 @@ Author changes under `packages\webhook-playbook\.apm`. Do not edit the installed
 copies under the root or second consumer's `.github` and `.agents` directories.
 The next install would overwrite or report those changes as drift.
 
-Your feature is **release evidence for a webhook change**, not another application
+Your feature is **safe package upgrades and rollback**, not another application
 feature. The skill already covers implementation and testing; extend it with a
-reviewable handoff that another team can reuse.
+procedure that another team can reuse when changing its installed guidance.
 
-## 2. Add a reference with an explicit evidence contract
+## 2. Add an upgrade and rollback reference
 
-Create `release-evidence.md` beside the skill's existing delivery-contract
+Create `package-upgrade.md` beside the skill's existing delivery-contract
 reference in the authored package.
 
 The new document must contain these exact headings so the checkpoint can inspect
 the agreed output structure:
 
 ```markdown
-## Required evidence
+## Upgrade
 ## Rollback
 ## Limits
 ```
 
-Under **Required evidence**, specify at least:
+Under **Upgrade**, explain how a team:
 
-- Package name and version.
-- Package content hash from the generated lockfile after installation.
-- Baseline command, actual result, and whether any tests were skipped.
-- Acceptance command, actual result, and whether any tests were skipped.
-- Reviewer findings and the disposition of each material finding.
-- Bundle filename and archive SHA-256, when a bundle is distributed.
+- Identifies the current and proposed package versions.
+- Reviews authored changes, metadata, and skill-relative references.
+- Uses LF source text before generating locks.
+- Intentionally installs the reviewed update in both consumers.
+- Reviews the deployment diff and checks reuse, audits, and application tests.
+- Stops if a required check fails instead of weakening the gate.
 
 Under **Rollback**, explain how a team returns to a previously reviewed package
 release or source revision, regenerates the lockfile with an intentional normal
@@ -53,8 +53,8 @@ install, reviews the deployment diff, and reruns the audit and application tests
 Do not prescribe hand-editing a lockfile or resetting unrelated work.
 
 Under **Limits**, state that package integrity does not prove correct model
-behavior, tests do not establish distributed exactly-once delivery, and evidence
-must not contain secrets.
+behavior, tests do not establish distributed exactly-once delivery, and package
+content must not contain secrets.
 
 You may ask Copilot to author the reference. Give it the scope and requirements
 above; review the resulting content yourself. A long document is not inherently
@@ -62,10 +62,10 @@ better than a short, checkable contract.
 
 ## 3. Wire the reference into the skill
 
-Edit the authored skill, adding a release-handoff step that links to:
+Edit the authored skill, adding a package-update step that links to:
 
 ```markdown
-[release evidence](./references/release-evidence.md)
+[package upgrade](./references/package-upgrade.md)
 ```
 
 The relative link must be exactly usable from the installed skill, not only from
@@ -83,7 +83,7 @@ directory. Use:
 
 ```yaml
 ---
-description: "Use when reviewing package Markdown, release evidence, or reusable Copilot guidance."
+description: "Use when reviewing package Markdown, upgrade procedures, or reusable Copilot guidance."
 applyTo: "packages/**/*.md"
 ---
 ```
@@ -92,8 +92,8 @@ Write a concise body that tells a contributor to:
 
 1. Change authored package source rather than deployed copies.
 2. Keep skill-relative references valid after installation.
-3. Review a version change, evidence requirements, and deployment diff together.
-4. Report actual test and audit results without claiming model determinism.
+3. Review a version change, upgrade procedure, and deployment diff together.
+4. Run required checks without claiming that passing audits ensures model determinism.
 
 Do not use `applyTo: "**"` or add a new agent when one small instruction suffices.
 
@@ -140,7 +140,7 @@ Expected: version 1.1.0, the new reference, and the scoped instruction appear in
 both deployed trees. The baseline stays transitive and unchanged.
 
 The authoring verifier checks structure and deployment. You must still review
-the meaning of the evidence document; heading checks cannot prove its quality.
+the upgrade procedure itself; heading checks cannot prove its quality.
 
 ## 7. Validate and review the deployment diff
 
@@ -207,7 +207,7 @@ Get-FileHash -LiteralPath $Bundle -Algorithm SHA256
 ```
 
 Expected: one ZIP containing a plugin manifest, primitive folders, and an embedded
-integrity lockfile. Record the archive SHA-256 in your evidence.
+integrity lockfile. Inspect its SHA-256 when comparing distributed copies.
 
 The `claude-plugin` format name describes the supported bundle layout. APM can
 deploy this bundle to the Copilot target; it does not require Claude to be
@@ -231,7 +231,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'The bundle could not be installed.' }
     & "$Repo\scripts\apm.ps1" audit --ci --policy "$Repo\apm-policy.yml"
     if ($LASTEXITCODE -ne 0) { throw 'Installed-bundle audit failed.' }
-    Get-Content .\.agents\skills\webhook-change\references\release-evidence.md
+    Get-Content .\.agents\skills\webhook-change\references\package-upgrade.md
     Get-Content .\apm.yml
 }
 finally {
@@ -242,7 +242,7 @@ finally {
 Expected: the new reference is available and the audit passes. The empty
 consumer's manifest is **not** rewritten with a declarative package dependency:
 bundle installation is an imperative distribution flow and records deployment
-evidence in the lockfile. Keep the original ZIP as its source artifact.
+metadata in the lockfile. Keep the original ZIP as its source artifact.
 
 Inspect the installed agent's read-only tools and the prompt as well. A skill
 alone is not proof that all primitive types survived distribution.
@@ -250,8 +250,8 @@ alone is not proof that all primitive types survived distribution.
 ## 11. Repeat discovery and validate the round-trip
 
 Start a new root-workspace Copilot chat. Ask it to use the updated skill and
-produce a release-evidence summary for the application change. Confirm it reads
-the new installed reference, and verify that it does not invent command results.
+explain how to upgrade and roll back a reviewed package. Confirm it reads the new
+installed reference and preserves the required checks and source boundaries.
 
 Then run:
 
@@ -264,15 +264,15 @@ if ($LASTEXITCODE -ne 0) { throw 'Package work must not regress application beha
 
 The round-trip test compares normalized text content and audits the installed
 bundle. ZIP bytes themselves need not be identical between independent builds;
-archive metadata can differ. Record the hash of the artifact actually shared.
+archive metadata can differ. Compare the hash of the artifact actually shared.
 
-## Completion evidence
+## Completion checks
 
-- Package version 1.1.0 and the updated content hash.
-- New reference and scoped instruction, deployed in both consumers.
-- Passing authoring, reuse, audit, and acceptance results.
-- ZIP filename, SHA-256, and successful clean-consumer installation.
-- A real Copilot use of the new installed reference.
+- Package version 1.1.0 is installed with matching content in both consumers.
+- The new reference and scoped instruction are deployed in both consumers.
+- Authoring, reuse, audit, and acceptance checks pass.
+- The ZIP installs successfully into a clean consumer.
+- Copilot can use the new installed reference.
 
 **Checkpoint:** you can author and distribute a usable package, not merely create
 a Markdown file. Continue to [Lab 5](05-govern.md).

@@ -24,7 +24,7 @@ failures is part of the workshop. No hidden solution is installed into Copilot.
    [hosting and permissions](docs/azure-devops.md) and the [instructor guide](docs/instructor.md).
 2. **Learners:** complete [environment setup](labs/00-setup.md).
 3. Follow the six labs in order. Each includes commands, expected observations,
-   Copilot prompts, evidence requirements, and recovery guidance.
+  Copilot prompts, completion checks, and recovery guidance.
 
 | Lab | Time | Outcome |
 |---|---:|---|
@@ -88,7 +88,6 @@ labs\                        Detailed learner walkthroughs
 docs\                        Architecture, hosting, instructor, troubleshooting
 fixtures\                    Inert discussion and policy material
 scripts\                     Pinned APM wrapper, checks, release staging, scenarios
-evidence\                    Submission template and evidence expectations
 .github\                     Root consumer's Copilot outputs and bootstrap rules
 .agents\                     Root consumer's installed skill and references
 apm.yml                      Root consumer manifest

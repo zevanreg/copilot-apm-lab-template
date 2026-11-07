@@ -16,7 +16,7 @@ Find these fields in the lockfile:
 | `repo_url` | Package identity, such as `_local/webhook-playbook`. |
 | `source` / `local_path` | Local package source and declared path. |
 | `content_hash` | Resolved package-content integrity value. |
-| `depth` / `resolved_by` | Evidence that the baseline is transitive. |
+| `depth` / `resolved_by` | Direct and transitive dependency relationships. |
 | `deployed_files` / `deployed_file_hashes` | Recorded target files and text hashes. |
 | `deployments` | Target ownership and placement information. |
 
@@ -24,7 +24,7 @@ Do not assume local packages have Git commit pins. Their source is reviewed in
 the Azure repository and their content is hashed. A remote Git dependency can
 add resolved commit provenance.
 
-Explain in your evidence why `apm_modules` is derived installation state while
+Understand why `apm_modules` is derived installation state while
 the manifest, lockfiles, authored sources, and reviewable deployed files belong
 in Git.
 
@@ -104,7 +104,7 @@ The whole lockfiles need not be identical: their declarations and deployment
 ownership use different project-relative paths. Do not "fix" that legitimate
 difference by copying one lockfile over the other.
 
-In your evidence, record both package content hashes and one legitimate
+Compare both package content hashes and identify a legitimate
 project-relative difference between the lockfiles.
 
 ## 6. Observe the second consumer in a separate VS Code window
@@ -114,7 +114,7 @@ directory. Start a new chat. Locate its installed skill, prompt, and reviewer.
 Inspect which physical file path appears in the chat's references.
 
 Because both APM projects live in one Git repository, some VS Code versions or
-settings may also discover parent customizations. Record the observed scope;
+settings may also discover parent customizations. Check the actual scope;
 do not claim a separate folder is an isolation or security boundary. The
 deterministic proof of two installations is the distinct deployed trees and
 their validated content.
@@ -147,14 +147,14 @@ That extension requires a real Azure URL, published tag or commit, and verified
 private-repository authentication. Do not substitute fictional URLs and claim a
 successful remote installation.
 
-## Completion evidence
+## Completion checks
 
-- A dependency graph with direct and transitive edges.
-- Matching before/after hashes for each frozen lockfile.
-- Passing reuse verification.
-- Both package-content hashes and a legitimate lockfile path difference.
-- Your observed Copilot discovery scope in the second window.
-- Passing cold-replay workflow test.
+- Direct and transitive dependency relationships are clear.
+- Each frozen install leaves its lockfile unchanged.
+- Reuse verification passes and package-content hashes match.
+- Legitimate project-relative lockfile differences remain intact.
+- Copilot can use the second consumer's deployed context.
+- The cold-replay workflow test passes.
 
 **Checkpoint:** you have demonstrated reproducible context, not reproducible LLM
 wording. Continue to [Lab 4](04-author.md).

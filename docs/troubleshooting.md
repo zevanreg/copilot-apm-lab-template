@@ -108,7 +108,7 @@ authoring changes. It verifies and rematerializes the locked skill without
 If you already changed source, preserve that work. Use a new checkout of the
 reviewed starting revision, run setup and materialization there, then reapply
 your reviewed source changes and intentionally regenerate both consumers.
-Do not copy `.apm-local` or user-global receipts to manufacture overwrite evidence.
+Do not copy `.apm-local` or user-global receipts to manufacture overwrite authorization.
 If the helper reports a backup after failing, preserve it until you inspect the
 specific skill tree and decide how to restore it safely.
 
@@ -129,7 +129,7 @@ Do not remove content checks because a raw comparison used the wrong semantics.
 4. Start a new chat; reload the window if necessary.
 5. Inspect VS Code's current customization diagnostics and organization settings.
 6. Try **Chat: Run Prompt**, the agent picker, or explicit context attachment.
-7. Record the exact method that worked rather than claiming automatic discovery.
+7. Verify the method that worked; explicit attachment is not automatic discovery.
 
 Parent and nested repository customizations may both be discovered. The nested
 folder is not a guaranteed isolation boundary.
@@ -168,7 +168,7 @@ Verify the real clone URL and repository permissions. Use the approved Git
 credential helper or APM's documented Azure authentication flow.
 Remote package authentication is additional to the core local-path exercises.
 
-Do not paste tokens into chat, manifests, evidence, URL userinfo, or debug logs.
+Do not paste tokens into chat, manifests, documentation, URL userinfo, or debug logs.
 For Azure DevOps Server, confirm the registered host and its distinct auth flow.
 
 ## Azure pipeline cannot access packages or agent pool
@@ -182,7 +182,8 @@ authorize another clone. Test the actual noninteractive authentication path.
 
 ## CI is green but acceptance never ran
 
-Inspect `ci-summary.json`. Starter mode is not graduation.
+Inspect the validation log for the execution mode and `GRADUATION PASSED`.
+Starter mode is not graduation.
 Set the pipeline default to require acceptance and verify the actual build
 parameter, step logs, and final PR commit. Protect changes to the gate itself.
 

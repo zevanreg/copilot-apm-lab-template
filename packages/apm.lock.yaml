@@ -13,14 +13,14 @@ dependencies:
   - .github/instructions/webhooks.instructions.md
   - .github/prompts/review-webhook.prompt.md
   deployed_file_hashes:
-    .agents/skills/webhook-change/SKILL.md: sha256:a12b61ba9d96309ea54dd5b9737bc19036d26c02c7dec26813678ee309203774
+    .agents/skills/webhook-change/SKILL.md: sha256:47121385f4e9784a43ccce11cd833258b7c739a138ec7757925a4c7bfcad856e
     .agents/skills/webhook-change/references/delivery-contract.md: sha256:b81c3a1d3d6fbbf72f119305a87a8a8d5bf57532ecdb34a7d8b8567de179c2f8
-    .github/agents/webhook-reviewer.agent.md: sha256:4d814de6657b4c71dea01de731258c695c23fbd08e15873c1ff2343ee115ad8e
+    .github/agents/webhook-reviewer.agent.md: sha256:871c23915857042679af31d2fa8ee2ba9a76c358828fe25f119b281bc8950e17
     .github/instructions/webhooks.instructions.md: sha256:c240616a7a2aec2ff7b06a545f221cc7e5436b9f48bd29f2386a357c3ec526ab
-    .github/prompts/review-webhook.prompt.md: sha256:1c57b300b7d98426ee98efa2ab3cedc05969021b8b267dae8f5cdb24df591646
+    .github/prompts/review-webhook.prompt.md: sha256:7f85edbc2bb5ff46a22287f1ae259f253c5cb79c7c66de95750f7bef46bdc59f
   source: local
   local_path: ./webhook-playbook
-  content_hash: sha256:de934adf80f25cda88988ff1c4f2c00a03b572e192ccf8a817dc7ea139a31346
+  content_hash: sha256:f1265633cc14cb487a335e916d37115aec0b0e07b65293c6ce5133cb574ae1d0
 - repo_url: _local/engineering-baseline
   name: engineering-baseline
   version: 1.0.0
@@ -30,12 +30,12 @@ dependencies:
   deployed_files:
   - .github/instructions/engineering.instructions.md
   deployed_file_hashes:
-    .github/instructions/engineering.instructions.md: sha256:b11f22ecdd895ec4faaf5d2eb48857946090ef4abc25e78f15d1190c2e80c934
+    .github/instructions/engineering.instructions.md: sha256:fb2aabc233df6298e4c2bd806a7bf042a0a33734c971d1c43e746d2b3f5bfe84
   source: local
   local_path: ../engineering-baseline
   declaring_parent: ./webhook-playbook
   anchored_local_path: engineering-baseline
-  content_hash: sha256:22aea4c3105b618421ad488ca5781a186954699e13199c5c0280ecf76009153e
+  content_hash: sha256:a76eea1b082767aa074df1d8decf120a7613a198bd2b97121f41386ee8095f56
 deployments:
 - kind: project-relative
   target: copilot
@@ -54,7 +54,7 @@ deployments:
   owners:
   - ./webhook-playbook
   active_owner: ./webhook-playbook
-  content_hash: sha256:a12b61ba9d96309ea54dd5b9737bc19036d26c02c7dec26813678ee309203774
+  content_hash: sha256:47121385f4e9784a43ccce11cd833258b7c739a138ec7757925a4c7bfcad856e
 - kind: project-relative
   target: copilot
   value: .agents/skills/webhook-change/references/delivery-contract.md
@@ -72,7 +72,7 @@ deployments:
   owners:
   - ./webhook-playbook
   active_owner: ./webhook-playbook
-  content_hash: sha256:4d814de6657b4c71dea01de731258c695c23fbd08e15873c1ff2343ee115ad8e
+  content_hash: sha256:871c23915857042679af31d2fa8ee2ba9a76c358828fe25f119b281bc8950e17
 - kind: project-relative
   target: copilot
   value: .github/instructions/engineering.instructions.md
@@ -81,7 +81,7 @@ deployments:
   owners:
   - local:engineering-baseline
   active_owner: local:engineering-baseline
-  content_hash: sha256:b11f22ecdd895ec4faaf5d2eb48857946090ef4abc25e78f15d1190c2e80c934
+  content_hash: sha256:fb2aabc233df6298e4c2bd806a7bf042a0a33734c971d1c43e746d2b3f5bfe84
 - kind: project-relative
   target: copilot
   value: .github/instructions/webhooks.instructions.md
@@ -99,4 +99,4 @@ deployments:
   owners:
   - ./webhook-playbook
   active_owner: ./webhook-playbook
-  content_hash: sha256:1c57b300b7d98426ee98efa2ab3cedc05969021b8b267dae8f5cdb24df591646
+  content_hash: sha256:7f85edbc2bb5ff46a22287f1ae259f253c5cb79c7c66de95750f7bef46bdc59f

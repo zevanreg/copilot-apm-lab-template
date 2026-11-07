@@ -9,8 +9,8 @@ A reusable set of Copilot primitives for Northstar webhook changes:
 - [Read-only reviewer agent](.apm/agents/webhook-reviewer.agent.md).
 
 The [manifest](apm.yml) composes the sibling engineering baseline.
-Version 1.0.0 is the learner starter. Lab 4 adds release evidence and a scoped
-package-review instruction, then intentionally releases version 1.1.0.
+Version 1.0.0 is the learner starter. Lab 4 adds an upgrade/rollback reference and
+a scoped package-review instruction, then intentionally releases version 1.1.0.
 
 Author under `.apm`, not in a consumer's deployed files. Restore through the
 consumer manifests at the repository root and the parent packages directory.

@@ -85,7 +85,7 @@ export async function runApm(args, { cwd = root, failure = false } = {}) {
 export async function copyInputs(destination) {
   await mkdir(destination, { recursive: true });
   const entries = [
-    "apm.yml", "apm.lock.yaml", "apm-policy.yml", ".gitignore",
+    "apm.yml", "apm.lock.yaml", "apm-policy.yml", "azure-pipelines.yml", ".gitignore",
     ".github", ".agents", "packages", "fixtures",
   ];
   for (const entry of entries) {

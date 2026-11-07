@@ -35,11 +35,6 @@ steps:
       arguments: -RequireAcceptance:$${{ parameters.requireAcceptance }}
       pwsh: true
 
-  - publish: $(Build.SourcesDirectory)\.lab\reports
-    artifact: lab-validation
-    displayName: Publish explicit validation mode and outcome
-    condition: always()
-
   - publish: $(Build.SourcesDirectory)\.lab\release\build
     artifact: northstar-webhook-kit
     displayName: Publish the self-contained context package

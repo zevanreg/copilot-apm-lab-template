@@ -14,11 +14,9 @@ function Invoke-Checked {
     }
 }
 
-$outcome = 'failed'
-$reports = Join-Path $root '.lab\reports'
-New-Item -ItemType Directory -Path $reports -Force | Out-Null
 Push-Location $root
 try {
+    Write-Host $(if ($RequireAcceptance) { 'Validation mode: graduation (acceptance required)' } else { 'Validation mode: starter (acceptance not required)' })
     & (Join-Path $PSScriptRoot 'install-apm.ps1')
     Invoke-Checked -Command 'npm' -Arguments @('ci', '--ignore-scripts')
     Invoke-Checked -Command 'npm' -Arguments @('run', 'check')
@@ -50,17 +48,13 @@ try {
     }
     if ($RequireAcceptance) {
         Invoke-Checked -Command 'npm' -Arguments @('run', 'verify:graduation')
+        Write-Host 'GRADUATION PASSED: acceptance and all graduation requirements were verified.'
     }
     else {
         Write-Warning 'STARTER MODE ONLY: acceptance and graduation have not been verified. This is not a graduation build.'
+        Write-Host 'STARTER VALIDATION PASSED: acceptance and graduation remain unverified.'
     }
-    $outcome = 'passed'
 }
 finally {
-    @{
-        outcome = $outcome
-        mode = $(if ($RequireAcceptance) { 'graduation' } else { 'starter' })
-        acceptanceRequired = [bool] $RequireAcceptance
-    } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $reports 'ci-summary.json') -Encoding utf8
     Pop-Location
 }

@@ -62,7 +62,7 @@ if ($LASTEXITCODE -ne 0) { throw 'The Azure remote is not accessible.' }
 ```
 
 Use your approved Git Credential Manager or SSH setup. Do not embed a token in
-the clone URL. Do not paste credentials into chat or evidence.
+the clone URL. Do not paste credentials into chat or documentation.
 
 The initial status should be clean. The remote query should list refs from your
 assigned Azure repository. If there are pre-existing changes, inspect them with
@@ -81,7 +81,6 @@ select the repository root.
 2. Open the Extensions view and confirm GitHub Copilot is installed and enabled.
 3. Sign in with the account that has your Copilot entitlement.
 4. Open Chat and confirm you can select the approved model and Agent mode.
-5. Record your VS Code version and selected model in your evidence later.
 
 Do not install an extension or enable broad permissions solely because an agent
 suggests doing so. The lab needs no external MCP server.
@@ -172,7 +171,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Context materialization failed; preserve the r
 ```
 
 Why this additional step? APM 0.35.0 does not treat copied lock metadata as trusted
-local overwrite evidence for a changed skill. A fresh clone's committed skill
+local overwrite authorization for a changed skill. A fresh clone's committed skill
 files can be audited, but a later update needs local write receipts.
 
 The helper first checks every skill file against its lock and rejects extra files
@@ -190,20 +189,7 @@ Do not use a normal install to hide an unexpected frozen-install failure.
 First distinguish a real source change from an incomplete checkout or unsupported
 tool version using [troubleshooting](../docs/troubleshooting.md).
 
-## 8. Create your evidence file
-
-```powershell
-if (Test-Path -LiteralPath .\evidence\submission.md) {
-    throw 'An evidence file already exists. Keep it; do not overwrite previous work.'
-}
-Copy-Item -LiteralPath .\evidence\TEMPLATE.md -Destination .\evidence\submission.md
-```
-
-Open the copied file and replace the environment placeholders. Keep tokens,
-personal identifiers, tenant IDs, unrelated internal URLs, and private chat
-content out of it. Your alias is enough for the workshop.
-
-## 9. Check your starting state
+## 8. Check your starting state
 
 ```powershell
 npm run verify:starter
@@ -211,8 +197,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Starter context verification failed.' }
 git --no-pager status --short
 ```
 
-The evidence file should be the only intentional learner change. Ignored tools,
-caches, build output, and `apm_modules` must not appear as files to commit.
+The working tree should still be clean. Ignored tools, caches, build output,
+and `apm_modules` must not appear as files to commit.
 
 **Checkpoint:** tools are available, both locked contexts restore, and starter
 checks pass. Continue to [Lab 1](01-diagnose.md).

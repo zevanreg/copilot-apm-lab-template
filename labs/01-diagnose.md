@@ -1,4 +1,4 @@
-# Lab 1: diagnose context sprawl and capture the behavioral gap
+# Lab 1: diagnose context sprawl and observe the behavioral gap
 
 **Time:** 15 minutes.
 **Starting directory:** repository root.
@@ -29,7 +29,7 @@ Get-Content .\fixtures\legacy-guidance\team-b.txt
 These are plain text discussion fixtures. They are not installed instructions,
 skills, hooks, or executable programs.
 
-In your evidence, answer:
+Consider:
 
 1. Which statements conflict about repeated delivery?
 2. What would happen if both were copied into always-on instructions?
@@ -51,8 +51,8 @@ Trace one request through parsing, validation, delivery, and response. Notice
 that identifiers are normalized before delivery and that the store returns copies.
 The defect is not a reason to rewrite the server or add a framework.
 
-Write a four-row table for first delivery, replay, conflict, and invalid input:
-expected status, expected mutation, and the test that observes it.
+Check first delivery, replay, conflict, and invalid input against their expected
+status, allowed mutation, and the test that observes each case.
 
 ## 4. Establish the passing regression baseline
 
@@ -65,8 +65,7 @@ Expected on the untouched starter: **10 tests pass, none fail or skip**.
 These protect the health endpoint, initial dispatch, normalization, validation,
 body limit, media type, response envelopes, and store encapsulation.
 
-Record the command and result in your evidence. Do not infer this result from
-APM output; these are application tests.
+Confirm the result directly from the application test run, not from APM output.
 
 ## 5. Observe the intentional acceptance failures
 
@@ -89,7 +88,7 @@ Read the assertions, not only the summary. Identify:
 - Why comparing raw JSON text is insufficient for normalized business identity.
 - The scope of the concurrency guarantee: one in-memory process.
 
-The nonzero exit is evidence of the seeded task, not a command to suppress.
+The nonzero exit exposes the seeded task, not a command to suppress.
 If you see a missing module, syntax error, or connection error instead, that is
 an environment or implementation problem, not the expected learner failure.
 
@@ -111,7 +110,7 @@ Do not issue a blanket reset.
 
 ## 7. Decide what belongs in each customization primitive
 
-Complete this classification in your evidence:
+Compare these customization choices:
 
 | Knowledge or task | Appropriate primitive | Reason |
 |---|---|---|
@@ -122,13 +121,13 @@ Complete this classification in your evidence:
 
 Explain why none of these replaces automated acceptance tests.
 
-## Completion evidence
+## Completion checks
 
-- A passing baseline result.
-- At least two named acceptance failures and their meaning.
-- A requirements/status/mutation table.
-- Your primitive selection rationale.
-- No application fix yet.
+- The baseline tests pass.
+- You can explain at least two named acceptance failures.
+- Each delivery case has a defined status, mutation rule, and test.
+- The customization choices match their scope and role.
+- No application fix has been implemented yet.
 
 **Checkpoint:** you can distinguish guidance quality, installed-content integrity,
 and observable application correctness. Continue to [Lab 2](02-consume.md).

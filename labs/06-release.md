@@ -4,7 +4,7 @@
 **Starting directory:** repository root.
 **Prerequisites:** [Lab 5](05-govern.md), a personal lab repository or the
 organizer's shared-repository workflow, and access to Azure Pipelines.
-**End state:** a reviewed PR with explicit graduation evidence.
+**End state:** a reviewed PR with required graduation-mode build validation.
 
 ## 1. Inspect the starter pipeline before changing it
 
@@ -17,7 +17,7 @@ Find:
 3. The audit **before** frozen restoration, followed by restore and another audit.
 4. Both APM projects, reuse verification, and the five workflow tests.
 5. The conditional graduation check and its explicit starter-mode warning.
-6. The published validation summary and generated package artifact.
+6. The explicit validation-mode log messages and generated package artifact.
 
 The starter pipeline can pass while the seeded acceptance task is unfinished.
 That is deliberate workshop scaffolding, not an acceptable final release gate.
@@ -40,32 +40,9 @@ git --no-pager diff -- azure-pipelines.yml
 The default ensures normal policy-triggered runs require graduation. It is not
 tamper-proof by itself: protect pipeline, check scripts, and policy changes with
 required reviewers. Manual runs that override the parameter to `false` must never
-be presented as graduation evidence.
+be treated as graduation builds.
 
-## 3. Complete the submission evidence
-
-Open your evidence file and replace every `REPLACE_ME` value from
-[the template](../evidence/TEMPLATE.md).
-
-Include:
-
-- Baseline and acceptance commands with actual counts.
-- Installed primitive paths and the Copilot discovery method you observed.
-- Both consumers' package versions and content hashes.
-- New authored files and the deployment review outcome.
-- Drift and policy negative results, their exact named checks, and successful repairs.
-- Release ZIP name and archive SHA-256.
-- Reviewer findings and your disposition.
-- The Azure build and PR links once created.
-
-Before a hosted build exists, explicitly write `pending first hosted build` in
-the build-link field. Do not invent a URL or mark it verified. Update it after
-the first real run and push that evidence update for a final build.
-
-The local graduation check can verify files and configuration, not that an Azure
-UI setting or claimed URL is genuine. A facilitator must review hosted evidence.
-
-## 4. Run graduation locally
+## 3. Run graduation locally
 
 ```powershell
 npm run verify:graduation
@@ -79,13 +56,12 @@ Expected:
 - Helper tests and documentation/customization checks pass.
 - Authoring version 1.1.0, reference, scoped instruction, and both deployments pass.
 - The pipeline default requires acceptance.
-- The evidence file has no template placeholders.
 - Both explicit-policy audits pass.
 
 If a check fails, repair its actual cause. Do not remove the test, weaken the
 policy, edit a generated lock by hand, or change the graduation script.
 
-## 5. Run the same full script used by Azure Pipelines
+## 4. Run the same full script used by Azure Pipelines
 
 ```powershell
 & .\scripts\ci.ps1 -RequireAcceptance
@@ -99,34 +75,24 @@ release ZIP, and runs graduation.
 Inspect:
 
 ```powershell
-Get-Content .\.lab\reports\ci-summary.json
 Get-ChildItem -LiteralPath .\.lab\release\build -File
 ```
 
-Expected summary:
+The validation log must start in graduation mode and finish with
+`GRADUATION PASSED`. That final message appears only after the required checks
+succeed. A passing result in starter mode does not satisfy this checkpoint.
 
-```json
-{
-  "outcome": "passed",
-  "mode": "graduation",
-  "acceptanceRequired": true
-}
-```
-
-The JSON property order is not significant. A passing result in `starter` mode
-does not satisfy this checkpoint.
-
-## 6. Review exactly what will be committed
+## 5. Review exactly what will be committed
 
 ```powershell
 git --no-pager status --short
 git --no-pager diff --stat
-git --no-pager diff -- app packages .github .agents apm.lock.yaml azure-pipelines.yml evidence
+git --no-pager diff -- app packages .github .agents apm.lock.yaml azure-pipelines.yml
 ```
 
 Expected changes include your focused API implementation, package version 1.1.0,
 the new authored reference and instruction, updated managed files and both
-lockfiles, the final pipeline default, and evidence.
+lockfiles, and the final pipeline default.
 
 Do not commit `node_modules`, `.tools`, `.lab`, `apm_modules`, credentials, or
 generated ZIPs. ZIPs belong in pipeline artifacts, not in the source history.
@@ -135,7 +101,7 @@ Do not stage unrelated changes or use a blanket reset.
 Stage the reviewed paths explicitly:
 
 ```powershell
-git add -- app\src packages .github .agents apm.lock.yaml azure-pipelines.yml evidence\submission.md
+git add -- app\src packages .github .agents apm.lock.yaml azure-pipelines.yml
 git --no-pager diff --cached --stat
 git --no-pager diff --cached --check
 if ($LASTEXITCODE -ne 0) { throw 'Resolve staged whitespace errors before committing.' }
@@ -147,7 +113,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Push failed; resolve Azure Repos permissions o
 
 Follow any additional commit requirements your organization applies.
 
-## 7. Create or select the Azure pipeline
+## 6. Create or select the Azure pipeline
 
 If the organizer already created the pipeline, open it and select your branch.
 Otherwise:
@@ -166,7 +132,7 @@ If the organization has no Microsoft-hosted parallel-job capacity, use the
 organizer's approved Windows self-hosted pool. Do not create a cloud subscription
 or service connection just to work around that organization setting.
 
-## 8. Inspect the real build evidence
+## 7. Inspect the hosted build
 
 Open the validation step and confirm:
 
@@ -175,11 +141,9 @@ Open the validation step and confirm:
 - The expected negative cases are asserted by the tests, not ignored by
   `continueOnError`.
 - Acceptance and graduation actually ran.
-- The final summary says graduation, not starter.
+- The validation log finishes with `GRADUATION PASSED`, not the starter warning.
 
-Download or inspect the `lab-validation` artifact and its CI summary.
 Inspect the `northstar-webhook-kit` artifact for the release ZIP.
-Record the build link and the artifact name in your evidence.
 
 If the build fails only on Azure, classify it:
 
@@ -190,16 +154,16 @@ If the build fails only on Azure, classify it:
 
 Do not report a local run as a hosted build.
 
-## 9. Configure required Azure Repos validation
+## 8. Configure required Azure Repos validation
 
 This step needs branch-policy permissions. Ask the organizer to perform it if
-you do not have them; record that dependency rather than claiming success.
+you do not have them; do not claim the policy is configured until it is visible.
 
 1. Open **Repos > Branches**.
 2. Open the target branch's menu and select **Branch policies**.
 3. Under **Build validation**, add the lab pipeline.
 4. Set the trigger to **Automatic** and the policy to **Required**.
-5. Use no path filter, so application, package, policy, evidence, and pipeline
+5. Use no path filter, so application, package, policy, and pipeline
    changes all trigger the check.
 6. Choose an expiration policy that requires validation after target-branch changes.
 7. Add required reviewers for changes to pipeline definitions, scripts, and policy.
@@ -208,20 +172,18 @@ you do not have them; record that dependency rather than claiming success.
 Policies on the target branch govern merging. Merely running a pipeline manually
 does not establish required PR validation.
 
-## 10. Open the pull request and finish the evidence loop
+## 9. Open the pull request and verify the required build
 
 Create an Azure Repos pull request from your learner branch to the assigned target.
 Include:
 
 - The original behavioral gap.
 - The package/deployment change and version.
-- Links to passing graduation-mode builds and their artifacts.
-- Reviewer findings and remaining limitations.
-- Confirmation that no secrets or tool caches were committed.
+- Remaining limitations that affect the review.
 
-Update the evidence file with the real PR and build links, commit it, and push.
-Wait for the policy-triggered build on that final commit. A prior build on an
-earlier commit is not the final result.
+Resolve material review comments and confirm that no secrets or tool caches were
+committed. Wait for the policy-triggered build on the final commit. A prior build
+on an earlier commit is not the final result.
 
 If learners share one starter repository, follow the organizer's instruction to
 leave the PR open rather than merging competing workshop solutions into `main`.
@@ -232,11 +194,11 @@ leave the PR open rather than merging competing workshop solutions into `main`.
 - [ ] Package version 1.1.0 and the new reference/instruction are deployed twice.
 - [ ] Frozen replay, audit, reuse, negative cases, and bundle installation pass.
 - [ ] Default pipeline mode requires graduation.
-- [ ] Hosted build artifact says `mode: graduation`.
+- [ ] Hosted validation finishes with `GRADUATION PASSED`.
 - [ ] A release ZIP is available as an Azure Pipeline artifact.
 - [ ] Required Azure Repos build validation is visible on the PR.
-- [ ] Final evidence references the actual final commit and build.
+- [ ] The required build passes on the final PR commit.
 
-**Finish:** ask a facilitator to review the evidence against the
+**Finish:** ask a facilitator to review the code, package, and PR checks against the
 [instructor rubric](../docs/instructor.md). This is a package supply-chain lab,
 not a claim that the in-memory API or agent runtime is production-secure.

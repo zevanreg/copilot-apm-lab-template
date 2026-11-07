@@ -48,10 +48,10 @@ Expected: nonzero exit and a finding naming the webhook instruction, content
 integrity, or drift. A missing executable or policy-fetch error does not prove
 the drift check worked.
 
-Answer in your evidence:
+Consider:
 
 1. Why did the content lock not silently accept this change?
-2. Why would running a repair install **before** the audit weaken CI evidence?
+2. Why would running a repair install **before** the audit hide committed drift?
 3. Where would you edit if the guidance change were intentional?
 4. What would remain outside this check's guarantee?
 
@@ -122,7 +122,7 @@ finally {
 
 Expected in the prepared lab organization: installation completes, then the
 explicit audit reports a failing **scripts-policy** check and returns nonzero.
-Confirm the named check. Do not accept an unrelated failure as evidence.
+Confirm the named check. An unrelated failure does not satisfy this checkpoint.
 
 Why can installation complete? The root policy file is passed explicitly to
 audit; its presence in a checkout does not make it an automatically discovered
@@ -154,8 +154,8 @@ finally {
 }
 ```
 
-Expected: a passing audit. Compare rejected and accepted configurations in your
-evidence. The only necessary policy repair was removing the unwanted declaration.
+Expected: a passing audit. Compare rejected and accepted configurations.
+The only necessary policy repair was removing the unwanted declaration.
 
 ## 9. Clean up the named policy scenario and rerun the automated cases
 
@@ -173,7 +173,7 @@ not remove the repository, the entire `.lab` folder, or unrelated caches.
 
 The five workflow tests include a separate source-change case: frozen mode must
 reject a modified local baseline package. That is distinct from editing a
-deployed instruction. Explain that difference in your submission.
+deployed instruction. Check that the two cases fail for their respective reasons.
 
 ## 10. State the trust boundary accurately
 
@@ -188,13 +188,13 @@ Discuss:
 - Remote source policy and central organizational governance require real
   repository identities, permissions, and a separately verified rollout.
 
-## Completion evidence
+## Completion checks
 
-- A named drift finding with nonzero exit, followed by a clean repair.
-- A failing `scripts-policy` check, followed by a passing repaired candidate.
-- Confirmation that the proposed command was not executed.
-- Passing automated workflow tests.
-- Your explanation of source drift, deployment drift, and runtime limitations.
+- The drift audit names the modified file and passes after repair.
+- The `scripts-policy` check rejects the candidate and passes after repair.
+- The proposed command was not executed.
+- Automated workflow tests pass.
+- Source drift, deployment drift, and runtime limitations are distinguished.
 
 **Checkpoint:** negative cases fail for the intended reason and the real consumer
 is healthy again. Continue to [Lab 6](06-release.md).

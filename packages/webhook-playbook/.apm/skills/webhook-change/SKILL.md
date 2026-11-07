@@ -10,8 +10,8 @@ description: "Use when implementing, hardening, or validating webhook idempotenc
 4. Run the acceptance tests before editing and explain the observed failure.
 5. Implement the smallest contract-preserving change. Keep validation ahead of state mutation.
 6. Exercise repeated deliveries and distinct payloads, including concurrent requests.
-7. Run the baseline and acceptance tests. Report commands and actual outcomes.
+7. Run the baseline and acceptance tests. Resolve unexpected failures before continuing.
 8. Request a read-only review using the webhook reviewer agent.
 
 Do not edit tests merely to hide a failure. This skill guides work; the tests provide
-observable evidence. A package lock guarantees installed content, not model behavior.
+observable checks. A package lock guarantees installed content, not model behavior.

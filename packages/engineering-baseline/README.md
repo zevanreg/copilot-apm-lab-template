@@ -1,6 +1,6 @@
 # Engineering baseline
 
-Reusable evidence-first TypeScript engineering conventions.
+Reusable verification-first TypeScript engineering conventions.
 
 - Canonical source: [.apm instructions](.apm/instructions/engineering.instructions.md).
 - Manifest: [apm.yml](apm.yml).

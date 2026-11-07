@@ -74,11 +74,11 @@ if ($LASTEXITCODE -ne 0) { throw 'Context audit failed.' }
 
 If slash-command discovery differs in your VS Code version, use **Chat: Run
 Prompt**, the agent picker, or explicitly attach the installed skill file and
-reference. Record that you used explicit attachment rather than claiming
+reference. Treat explicit attachment as an alternative; do not claim
 automatic discovery worked.
 
 Do not treat "the assistant says it loaded the skill" as sufficient proof.
-Inspect the session's references/tool activity when available and record the
+Inspect the session's references/tool activity when available and verify the
 actual installed path it read. Use [troubleshooting](../docs/troubleshooting.md)
 if organization policy disables customization discovery.
 
@@ -95,7 +95,8 @@ Use this task:
 > identifier. Preserve the baseline behavior and pass concurrent identical
 > requests in one process. Do not change or skip the supplied tests, rewrite
 > managed Copilot files, add infrastructure, or claim durability. Show the failing
-> test first, implement a focused change, then run baseline and acceptance tests.
+> behavior with the acceptance tests first, implement a focused change, then run
+> baseline and acceptance tests.
 
 Review the proposed edits before accepting them. In particular:
 
@@ -161,24 +162,24 @@ Do not terminate processes by name or stop an unrelated process using port 3000.
 
 ## 8. Request a bounded review
 
-Select **Webhook Reviewer**, attach the edited files and actual test output, and ask:
+Select **Webhook Reviewer**, attach the edited files and relevant tests, and ask:
 
 > Review this webhook change against the delivery contract. Use read/search only.
 > Check replay identity, conflict immutability, validation order, and concurrency.
-> Return concrete findings with source and test evidence. Do not implement fixes
-> or claim you ran tests.
+> Return concrete findings with implementation locations and test coverage.
+> Do not implement fixes or claim you ran tests.
 
 Run the `/review-webhook` prompt as a second way to invoke a focused review if
-time permits. Record findings, decisions, and any remaining assumptions.
+time permits. Resolve material findings and check any remaining assumptions.
 Return to the implementation agent yourself if a fix is needed.
 
-## Completion evidence
+## Completion checks
 
-- Which deployed skill, prompt, instructions, and agent you actually used.
-- Passing baseline and acceptance results.
-- Manual status sequence and single-dispatch observation.
-- Reviewer findings and your response.
-- A concise explanation of why the solution is process-local, not distributed.
+- The deployed skill, prompt, instructions, and agent are usable.
+- Baseline and acceptance tests pass.
+- The manual status sequence is correct and creates one dispatch.
+- Material reviewer findings are resolved.
+- You can explain why the solution is process-local, not distributed.
 
 **Checkpoint:** the API task is complete, but the package-authoring and governance
 work remains. Continue to [Lab 3](03-reproduce.md).
