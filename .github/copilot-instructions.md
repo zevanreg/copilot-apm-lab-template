@@ -1,7 +1,8 @@
 # Northstar APM workshop
 
-This repository is hosted in Azure Repos. The `.github` directory is a local
-Copilot customization surface; GitHub does not host this repository.
+The initialized starter is cloned from GitHub, then published to Azure Repos for
+workshop branches, pull requests, and builds. The `.github` directory is a local
+Copilot customization surface, not a GitHub Actions requirement.
 
 - Read the current lab before changing files. Follow the learner's requested scope.
 - The starter's duplicate-delivery defect is intentional. Baseline tests should

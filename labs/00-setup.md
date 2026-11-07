@@ -5,20 +5,17 @@
 **End state:** the starter checks pass and Copilot is available; no application
 solution has been implemented.
 
-## 1. Confirm access before downloading anything
+## 1. Create an empty Azure Repos Git repository
 
-Ask your organizer for:
+1. Open the assigned Azure DevOps organization and project.
+2. Open **Repos**, select the repository menu, and choose **New repository**.
+3. Choose **Git** and name the repository, for example `copilot-apm-lab`.
+4. Do not initialize a competing README or ignore file; this checkout already
+   contains them.
+5. Copy the repository's credential-free HTTPS clone URL.
 
-- The Azure Repos HTTPS clone URL for your assigned lab repository.
-- Whether you have a personal repository or should use a feature branch in a
-  shared repository. Do not merge a completed exercise into a shared starter.
-- Permission to read code, contribute a branch, and create a pull request.
-- Permission to run the supplied pipeline, or a facilitator who will run it.
-- The approved model and any organization restrictions on custom agents or skills.
-
-Your GitHub Copilot account is separate from your Azure DevOps repository access.
-Being able to clone the repository does not establish a Copilot entitlement.
-No Azure subscription or service connection is needed for the core workshop.
+For private repositories, use your approved Entra/Git Credential Manager flow.
+Never put a PAT in a Git remote URL.
 
 ## 2. Open the correct shell and check tools
 
@@ -44,33 +41,50 @@ components if you are on version 24. A newer major version is supported.
 If a command is not found, install that prerequisite and open a new shell before
 continuing. Do not disable certificate checks or endpoint protection to proceed.
 
-## 3. Clone the Azure repository
+## 3. Clone the initialized GitHub starter and publish to Azure Repos
 
-If you are working from an already prepared local checkout, skip the clone and
-set the location to that checkout. Do not clone over an existing directory.
+Use the initialized GitHub starter supplied by the organizer. It already contains
+the lab files and Git history. Do not clone over an existing directory.
 
 ```powershell
 Set-Location C:\repos
-$CloneUrl = Read-Host 'Paste the Azure Repos HTTPS clone URL supplied by the organizer'
+$CloneUrl = Read-Host 'Paste the GitHub starter HTTPS clone URL supplied by the organizer'
 git clone $CloneUrl copilot-apm-lab
-if ($LASTEXITCODE -ne 0) { throw 'Clone failed; resolve Azure Repos authentication first.' }
+if ($LASTEXITCODE -ne 0) { throw 'Clone failed; resolve GitHub access or authentication first.' }
 Set-Location .\copilot-apm-lab
 $Repo = (Get-Location).Path
 git --no-pager status --short
 git ls-remote origin
-if ($LASTEXITCODE -ne 0) { throw 'The Azure remote is not accessible.' }
+if ($LASTEXITCODE -ne 0) { throw 'The GitHub starter remote is not accessible.' }
 ```
 
 Use your approved Git Credential Manager or SSH setup. Do not embed a token in
 the clone URL. Do not paste credentials into chat or documentation.
 
 The initial status should be clean. The remote query should list refs from your
-assigned Azure repository. If there are pre-existing changes, inspect them with
+GitHub starter repository. If there are pre-existing changes, inspect them with
 the organizer; do not reset or discard them.
 
-The locally generated repository supplied to an organizer may have no initial
-commit or remote yet. In that case, finish the [hosting guide](../docs/azure-devops.md)
-before treating it as the learner clone.
+The clone already has commits and an `origin` pointing to GitHub. Do not run
+`git init` or create another initial commit. Keep GitHub as `upstream` and use the
+empty Azure repository from step 1 for workshop branches, PRs, and builds:
+
+```powershell
+$AzureUrl = Read-Host 'Paste the empty Azure Repos HTTPS clone URL from step 1'
+git remote rename origin upstream
+if ($LASTEXITCODE -ne 0) { throw 'Could not preserve the GitHub remote; inspect existing remotes.' }
+git remote add origin $AzureUrl
+if ($LASTEXITCODE -ne 0) { throw 'Could not add the Azure remote; inspect existing remotes.' }
+git push -u origin HEAD:main
+if ($LASTEXITCODE -ne 0) { throw 'Publishing failed; resolve Azure Repos access or authentication.' }
+git ls-remote origin
+if ($LASTEXITCODE -ne 0) { throw 'The Azure remote is not accessible.' }
+```
+
+This publishes the existing history to Azure's `main` branch without changing
+local files. Do not push workshop changes to the shared GitHub starter or
+force-push over an existing Azure history. See the
+[hosting guide](../docs/azure-devops.md) for pipeline and branch-policy setup.
 
 ## 4. Open the repository in VS Code
 

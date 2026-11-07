@@ -1,10 +1,11 @@
 # Copilot lab: an APM context supply chain on Azure DevOps
 
 Turn copied AI guidance into reviewed, reusable, reproducible agent packages.
+Clone the initialized starter from GitHub, then publish it to Azure Repos.
 All workshop code, package sources, branches, pull requests, and builds live in
 **Azure Repos and Azure Pipelines**. GitHub Copilot runs locally in VS Code.
-No GitHub repository, GitHub Actions workflow, Azure subscription, database,
-external MCP server, or paid application infrastructure is required.
+No learner-owned GitHub repository, GitHub Actions workflow, Azure subscription,
+database, external MCP server, or paid application infrastructure is required.
 
 ## The assignment
 

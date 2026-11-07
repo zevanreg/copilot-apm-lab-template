@@ -138,8 +138,9 @@ after each test, without changing your application implementation.
 
 ## 8. Separate local reuse from remote distribution
 
-The core exercise reused package sources already obtained from Azure Repos by
-Git clone. It did not download packages from GitHub.
+The core exercise reuses local package sources cloned with the GitHub starter
+and published to Azure Repos during setup. APM does not download those packages
+from a remote host.
 
 For an actual Azure-hosted remote package install, use the optional, organizer-led
 [remote distribution extension](../docs/azure-devops.md#optional-remote-package-distribution).

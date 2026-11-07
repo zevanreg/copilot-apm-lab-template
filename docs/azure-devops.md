@@ -1,7 +1,8 @@
 # Host and operate the lab in Azure DevOps
 
 This guide is for the organizer. It describes actual Azure Repos and Azure
-Pipelines setup; no GitHub repository is involved.
+Pipelines setup. GitHub distributes the initialized starter; Azure Repos hosts
+the workshop copy and Azure Pipelines validates learner changes.
 
 ## Choose the workshop topology
 
@@ -42,7 +43,18 @@ Never put a PAT in a Git remote URL.
 
 ## 2. Validate the local starter before publishing
 
-From the local lab root:
+Clone the initialized GitHub starter first. If you already have the prepared
+checkout, use it instead; do not clone over an existing directory.
+
+```powershell
+Set-Location C:\repos
+$GitHubUrl = Read-Host 'Paste the initialized GitHub starter HTTPS clone URL'
+git clone $GitHubUrl copilot-apm-lab
+if ($LASTEXITCODE -ne 0) { throw 'Starter clone failed; resolve GitHub access or authentication.' }
+Set-Location .\copilot-apm-lab
+```
+
+From the cloned lab root:
 
 ```powershell
 & .\scripts\install-apm.ps1
@@ -64,9 +76,10 @@ if ($LASTEXITCODE -eq 0) { throw 'Do not publish an already-completed starter by
 Expected: 7 tests, 1 passing and 6 failing, for the deliberate duplicate/conflict
 gap. A syntax or dependency failure is not an acceptable workshop baseline.
 
-## 3. Create the initial commit and Azure remote
+## 3. Publish the existing history to Azure Repos
 
-This repository may already have local Git initialized but no commits.
+The GitHub clone already has Git history and an `origin` pointing to the starter.
+Do not run `git init` or create another initial commit.
 Inspect before changing source control:
 
 ```powershell
@@ -74,40 +87,43 @@ git --no-pager status --short
 git remote -v
 ```
 
-If Git is not initialized, run `git init --initial-branch=main` here.
-If an unexpected remote or existing history is present, preserve it and resolve
-the topology with the owner rather than overwriting it.
+The working tree should be clean. Preserve any local changes and resolve them
+with the owner before publishing. Do not commit `.tools`, `.lab`, `apm_modules`,
+`node_modules`, credentials, or a completed solution into the starter.
 
-Stage only the reviewed starter content:
-
-```powershell
-git add -- .gitignore .gitattributes .npmrc .github .agents app docs fixtures labs packages scripts README.md lab.config.json package.json package-lock.json tsconfig.json tsconfig.build.json apm.yml apm.lock.yaml apm-policy.yml azure-pipelines.yml
-git --no-pager diff --cached --stat
-git --no-pager diff --cached --check
-if ($LASTEXITCODE -ne 0) { throw 'Review staged whitespace errors before publishing.' }
-git commit -m "Add the Copilot APM lab for Azure DevOps"
-if ($LASTEXITCODE -ne 0) { throw 'Initial commit failed.' }
-```
-
-Follow your organization's commit-signing and attribution rules.
-Inspect the staged inventory before the commit: no `.tools`, `.lab`, `apm_modules`,
-`node_modules`, credentials, or completed application solution should be present.
-
-For a checkout with no existing origin:
+For a fresh GitHub clone, preserve its remote as `upstream`, then add the empty
+Azure repository as `origin`. If setup already configured those remotes, skip
+the rename/add commands and keep the existing configuration.
 
 ```powershell
 $AzureUrl = Read-Host 'Paste the empty Azure Repos HTTPS clone URL'
+git remote rename origin upstream
+if ($LASTEXITCODE -ne 0) { throw 'Could not preserve the GitHub remote; inspect existing remotes.' }
 git remote add origin $AzureUrl
 if ($LASTEXITCODE -ne 0) { throw 'Remote setup failed; inspect existing remotes.' }
-git push -u origin main
+git push -u origin HEAD:main
 if ($LASTEXITCODE -ne 0) { throw 'Publishing failed.' }
+```
+
+Preserve a reviewed starter tag. If `lab-start-v1.0.0` already exists in the clone,
+verify it identifies the intended starter and reuse it. Otherwise create it at
+the reviewed starter commit:
+
+```powershell
 git tag lab-start-v1.0.0
+if ($LASTEXITCODE -ne 0) { throw 'Could not create the starter tag; inspect existing tags.' }
+```
+
+Publish the reviewed tag to Azure, not to the shared GitHub starter:
+
+```powershell
 git push origin lab-start-v1.0.0
 if ($LASTEXITCODE -ne 0) { throw 'Publishing the starter tag failed.' }
 ```
 
 Do not force-push over a populated repository. Use a fresh repository or a reviewed
-integration workflow when history already exists.
+integration workflow when Azure already has history. Follow your organization's
+commit-signing and attribution rules for any subsequent edits.
 
 ## 4. Create the Azure Pipeline
 

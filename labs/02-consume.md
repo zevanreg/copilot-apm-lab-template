@@ -18,8 +18,9 @@ The reusable package sources live under each package's `.apm` directory.
 The webhook package declares the engineering baseline as a sibling dependency.
 
 The paths resolve from the manifest that declares them, not from whichever
-terminal directory happens to be open. The repository itself is an Azure Repos
-clone; local dependency paths do not require a GitHub-hosted package.
+terminal directory happens to be open. Setup clones the GitHub starter and
+publishes its history to Azure Repos; APM resolves these package dependencies
+from the local checkout, not from a remote package host.
 
 ## 2. Restore the exact approved package content
 
