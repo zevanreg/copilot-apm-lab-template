@@ -20,8 +20,8 @@ npm run test:baseline
 npm run test:acceptance
 ```
 
-The baseline passes on the starter. Acceptance intentionally fails until the
-learner completes [Lab 2](../labs/02-consume.md).
+The baseline and acceptance suites pass with the delivery fix from
+[Lab 2](../labs/02-consume.md).
 
 ## Endpoints
 
@@ -47,9 +47,12 @@ The complete required first/replay/conflict contract is in the package's
 
 ## Deliberate task and limits
 
-The starter [delivery function](src/delivery.ts) always creates a dispatch.
-The learner must implement replay and conflict decisions without weakening the
-existing HTTP and validation behavior.
+The [delivery function](src/delivery.ts) creates one dispatch for a first valid
+event (201), returns the original dispatch for an identical normalized replay
+(200), and rejects a reused event identifier with a different order or quantity
+(409) without mutation. Validation runs before delivery, so invalid input does
+not reserve an identifier. Lookup and creation are synchronous, preventing
+concurrent identical requests in one process from creating duplicate dispatches.
 
 There is no persistence, authentication, signature verification, cross-process
 coordination, or production logging stack. Restarting clears all dispatches.
