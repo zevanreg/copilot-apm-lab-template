@@ -31,10 +31,10 @@ in Git.
 ## 2. Prove frozen replay does not rewrite the root lockfile
 
 ```powershell
-$Before = (Get-FileHash -LiteralPath .\apm.lock.yaml -Algorithm SHA256).Hash
-& .\scripts\apm.ps1 install --frozen --target copilot
+$Before = (Get-FileHash -LiteralPath ./apm.lock.yaml -Algorithm SHA256).Hash
+& ./scripts/apm.ps1 install --frozen --target copilot
 if ($LASTEXITCODE -ne 0) { throw 'Frozen replay failed.' }
-$After = (Get-FileHash -LiteralPath .\apm.lock.yaml -Algorithm SHA256).Hash
+$After = (Get-FileHash -LiteralPath ./apm.lock.yaml -Algorithm SHA256).Hash
 if ($Before -ne $After) { throw 'The lockfile changed during a frozen install.' }
 ```
 
@@ -66,16 +66,16 @@ security boundary.
 
 ```powershell
 $Repo = (Get-Location).Path
-Push-Location .\packages
+Push-Location ./packages
 try {
-    $Before = (Get-FileHash -LiteralPath .\apm.lock.yaml -Algorithm SHA256).Hash
-    & "$Repo\scripts\apm.ps1" install --frozen --target copilot
+    $Before = (Get-FileHash -LiteralPath ./apm.lock.yaml -Algorithm SHA256).Hash
+    & "$Repo/scripts/apm.ps1" install --frozen --target copilot
     if ($LASTEXITCODE -ne 0) { throw 'Second-consumer frozen replay failed.' }
-    & "$Repo\scripts\apm.ps1" deps tree
+    & "$Repo/scripts/apm.ps1" deps tree
     if ($LASTEXITCODE -ne 0) { throw 'Second-consumer dependency inspection failed.' }
-    & "$Repo\scripts\apm.ps1" audit --ci --policy "$Repo\apm-policy.yml"
+    & "$Repo/scripts/apm.ps1" audit --ci --policy "$Repo/apm-policy.yml"
     if ($LASTEXITCODE -ne 0) { throw 'Second-consumer audit failed.' }
-    $After = (Get-FileHash -LiteralPath .\apm.lock.yaml -Algorithm SHA256).Hash
+    $After = (Get-FileHash -LiteralPath ./apm.lock.yaml -Algorithm SHA256).Hash
     if ($Before -ne $After) { throw 'The second lockfile changed during frozen replay.' }
 }
 finally {
@@ -143,7 +143,7 @@ and published to Azure Repos during setup. APM does not download those packages
 from a remote host.
 
 For an actual Azure-hosted remote package install, use the optional, organizer-led
-[remote distribution extension](../docs/azure-devops.md#optional-remote-package-distribution).
+[APM remote-distribution workflow](https://microsoft.github.io/apm/).
 That extension requires a real Azure URL, published tag or commit, and verified
 private-repository authentication. Do not substitute fictional URLs and claim a
 successful remote installation.

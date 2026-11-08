@@ -15,8 +15,8 @@ ask the organizer for an approved execution environment.
 Use [the wrapper](../scripts/apm.ps1), not a global `apm` from PATH:
 
 ```powershell
-& .\scripts\install-apm.ps1
-& .\scripts\apm.ps1 --version
+& ./scripts/install-apm.ps1
+& ./scripts/apm.ps1 --version
 ```
 
 Expected: 0.35.0. The installer does not upgrade global tools.
@@ -37,6 +37,14 @@ installer or extract the entire approved archive into the expected tool layout.
 Windows Arm64 requires x64 application emulation for the pinned APM distribution.
 If execution is blocked, use the organizer's supported Windows machine or agent.
 
+## Dev container cannot run APM
+
+The pinned Linux APM runtime requires glibc 2.38 or newer. Use the supplied
+Debian Trixie container and **Dev Containers: Rebuild Container** if an older
+image reports a missing glibc version. Do not replace system libraries manually.
+Linux APM may append a build revision to its version; the installer accepts that
+suffix while still requiring version 0.35.0 and the pinned archive checksum.
+
 ## npm restore or TypeScript fails
 
 Check Node.js is at least 24.11 and run `npm ci --ignore-scripts` from the root.
@@ -52,6 +60,22 @@ lockfile and use `npm ci --ignore-scripts --registry=<approved-mirror-url>
 --replace-registry-host=always` on one line. Replace the placeholder first.
 The mirror's bytes must still pass the original integrity pins. Do not delete
 integrity fields or commit a workstation-specific authenticated feed URL.
+
+If registry TLS negotiation fails on the host and in the container, use the
+approved network or mirror rather than bypassing certificate checks. A preseeded
+npm cache can be used offline only if it contains every dependency pinned in the
+lockfile. In the container's PowerShell terminal:
+
+```powershell
+$env:npm_config_offline = 'true'
+try {
+  pwsh -NoProfile -File .devcontainer/setup.ps1
+  if ($LASTEXITCODE -ne 0) { throw 'Offline container setup failed.' }
+}
+finally {
+  Remove-Item Env:\npm_config_offline
+}
+```
 
 ## Acceptance tests fail on the untouched starter
 
@@ -199,7 +223,7 @@ npm start
 Use that same port for manual probes, then clear the process-level variable:
 
 ```powershell
-Remove-Item Env:\PORT
+Remove-Item Env:/PORT
 ```
 
 Stop only your own server with Ctrl+C. Do not kill processes by name.

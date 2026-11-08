@@ -21,10 +21,9 @@ failures is part of the workshop. No hidden solution is installed into Copilot.
 
 ## Start here
 
-1. **Organizers:** publish the repository and prepare Azure DevOps using
-   [hosting and permissions](docs/azure-devops.md) and the [instructor guide](docs/instructor.md).
-2. **Learners:** complete [environment setup](labs/00-setup.md).
-3. Follow the six labs in order. Each includes commands, expected observations,
+1. Complete [environment setup](labs/00-setup.md), including the GitHub starter
+  clone and Azure Repos workshop copy.
+2. Follow the six labs in order. Each includes commands, expected observations,
   Copilot prompts, completion checks, and recovery guidance.
 
 | Lab | Time | Outcome |
@@ -41,22 +40,58 @@ one drives the application task, the other reviews the context supply chain.
 
 ## Supported environment
 
-- Windows x64, or Windows Arm64 with x64 application emulation.
+- The Linux dev container on x64 or Arm64, or native Windows x64/Arm64.
 - PowerShell 7, Git, VS Code, and a working GitHub Copilot entitlement.
 - Node.js 24.11 or newer. Azure Pipelines uses Node.js 24 LTS.
 - The lab downloads **APM 0.35.0**, verifies a pinned SHA-256, and keeps it local.
 - Azure Repos access; pipeline and branch-policy permissions for the final lab,
   or an organizer who can perform those administrative steps.
 
-The PowerShell commands in these guides are intentional. WSL, Bash, Codespaces,
-and Linux agents are not the supported walkthrough environment.
+The walkthrough uses PowerShell 7 on both platforms. Windows Arm64 uses x64
+emulation for APM; the container uses native Linux binaries. Azure Pipelines
+continues to use its supplied Windows agent.
+
+## Run in the dev container
+
+Install VS Code's **Dev Containers** extension and start a Docker-compatible
+engine with Linux-container support. No host Node.js or PowerShell installation
+is needed for the container workflow.
+
+Open the cloned repository and run **Dev Containers: Reopen in Container**.
+Alternatively, use **Dev Containers: Clone Repository in Container Volume...**
+with the initialized GitHub starter URL. The setup hook installs pinned APM,
+restores npm dependencies, prepares both locked Copilot contexts, and runs the
+starter checks. Sign in to Copilot and configure approved Git authentication as
+needed; do not put credentials in container configuration.
+
+Container dependencies live in a named `node_modules` volume, separate from the
+host installation. Rebuild the container after changing its configuration.
+
+Use the container's PowerShell terminal at the repository root:
+
+```powershell
+npm run check
+npm run test:lab
+& ./scripts/ci.ps1
+npm start
+```
+
+The API's port 3000 is forwarded to VS Code. Stop your own server with Ctrl+C.
+After completing the application and package exercises, run
+`& ./scripts/ci.ps1 -RequireAcceptance` for the graduation gate.
+
+Registry and release downloads require network access. On restricted networks,
+use an approved mirror or a preseeded, integrity-verified npm cache. You can rerun
+`pwsh -NoProfile -File .devcontainer/setup.ps1`; use `npm_config_offline=true`
+only when the pinned dependencies are already cached. Do not disable TLS or
+checksum verification.
 
 ## Quick local validation
 
 From the repository root in PowerShell 7:
 
 ```powershell
-& .\scripts\install-apm.ps1
+& ./scripts/install-apm.ps1
 npm ci --ignore-scripts
 npm run check
 npm run setup:context
@@ -86,9 +121,10 @@ packages\
   webhook-playbook\
     .apm\                    Authoritative skill, prompt, agent, instructions
 labs\                        Detailed learner walkthroughs
-docs\                        Architecture, hosting, instructor, troubleshooting
+docs\                        Architecture and troubleshooting
 fixtures\                    Inert discussion and policy material
 scripts\                     Pinned APM wrapper, checks, release staging, scenarios
+.devcontainer\               Native Linux tools and guarded startup setup
 .github\                     Root consumer's Copilot outputs and bootstrap rules
 .agents\                     Root consumer's installed skill and references
 apm.yml                      Root consumer manifest

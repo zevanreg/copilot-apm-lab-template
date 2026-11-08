@@ -14,8 +14,8 @@ transitive local paths portable when the checkout is relocated.
 From this directory:
 
 ```powershell
-& ..\scripts\apm.ps1 install --frozen --target copilot
-& ..\scripts\apm.ps1 audit --ci --policy ..\apm-policy.yml
+& ../scripts/apm.ps1 install --frozen --target copilot
+& ../scripts/apm.ps1 audit --ci --policy ../apm-policy.yml
 ```
 
 After an intentional source change in Lab 4, use a normal install instead of

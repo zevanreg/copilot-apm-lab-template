@@ -64,7 +64,7 @@ policy, edit a generated lock by hand, or change the graduation script.
 ## 4. Run the same full script used by Azure Pipelines
 
 ```powershell
-& .\scripts\ci.ps1 -RequireAcceptance
+& ./scripts/ci.ps1 -RequireAcceptance
 ```
 
 PowerShell errors from this script must be treated as failures; do not continue
@@ -75,7 +75,7 @@ release ZIP, and runs graduation.
 Inspect:
 
 ```powershell
-Get-ChildItem -LiteralPath .\.lab\release\build -File
+Get-ChildItem -LiteralPath ./.lab/release/build -File
 ```
 
 The validation log must start in graduation mode and finish with
@@ -101,7 +101,7 @@ Do not stage unrelated changes or use a blanket reset.
 Stage the reviewed paths explicitly:
 
 ```powershell
-git add -- app\src packages .github .agents apm.lock.yaml azure-pipelines.yml
+git add -- app/src packages .github .agents apm.lock.yaml azure-pipelines.yml
 git --no-pager diff --cached --stat
 git --no-pager diff --cached --check
 if ($LASTEXITCODE -ne 0) { throw 'Resolve staged whitespace errors before committing.' }
@@ -199,6 +199,6 @@ leave the PR open rather than merging competing workshop solutions into `main`.
 - [ ] Required Azure Repos build validation is visible on the PR.
 - [ ] The required build passes on the final PR commit.
 
-**Finish:** ask a facilitator to review the code, package, and PR checks against the
-[instructor rubric](../docs/instructor.md). This is a package supply-chain lab,
+**Finish:** ask a facilitator to review the code, package, and PR checks against
+the completion checklist above. This is a package supply-chain lab,
 not a claim that the in-memory API or agent runtime is production-secure.

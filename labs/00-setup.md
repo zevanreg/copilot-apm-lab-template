@@ -5,6 +5,19 @@
 **End state:** the starter checks pass and Copilot is available; no application
 solution has been implemented.
 
+## Dev container option
+
+Use the [dev container workflow](../README.md#run-in-the-dev-container) to avoid
+installing Node.js, PowerShell, and APM on the host. The container provides these
+tools and runs steps 5-8 automatically. Complete repository publishing and
+Copilot sign-in normally, then continue to Lab 1.
+
+In a container checkout, do not use `C:\repos` or clone over the mounted workspace.
+Skip the clone commands in step 3, keep the current repository directory, and
+use only its remote-publishing commands if Azure is not configured yet. The
+PowerShell examples use portable relative paths; native commands such as Node,
+Git, and APM need `/` separators on Linux.
+
 ## 1. Create an empty Azure Repos Git repository
 
 1. Open the assigned Azure DevOps organization and project.
@@ -47,11 +60,11 @@ Use the initialized GitHub starter supplied by the organizer. It already contain
 the lab files and Git history. Do not clone over an existing directory.
 
 ```powershell
-Set-Location C:\repos
+Set-Location C:/repos
 $CloneUrl = Read-Host 'Paste the GitHub starter HTTPS clone URL supplied by the organizer'
 git clone $CloneUrl copilot-apm-lab
 if ($LASTEXITCODE -ne 0) { throw 'Clone failed; resolve GitHub access or authentication first.' }
-Set-Location .\copilot-apm-lab
+Set-Location ./copilot-apm-lab
 $Repo = (Get-Location).Path
 git --no-pager status --short
 git ls-remote origin
@@ -84,7 +97,7 @@ if ($LASTEXITCODE -ne 0) { throw 'The Azure remote is not accessible.' }
 This publishes the existing history to Azure's `main` branch without changing
 local files. Do not push workshop changes to the shared GitHub starter or
 force-push over an existing Azure history. See the
-[hosting guide](../docs/azure-devops.md) for pipeline and branch-policy setup.
+[release lab](06-release.md) for pipeline and branch-policy setup.
 
 ## 4. Open the repository in VS Code
 
@@ -104,16 +117,16 @@ suggests doing so. The lab needs no external MCP server.
 In the VS Code PowerShell 7 terminal at the repository root:
 
 ```powershell
-& .\scripts\install-apm.ps1
-& .\scripts\apm.ps1 --version
+& ./scripts/install-apm.ps1
+& ./scripts/apm.ps1 --version
 if ($LASTEXITCODE -ne 0) { throw 'The pinned APM is not runnable.' }
 ```
 
 Expected version: `0.35.0`.
 
 The installer verifies the release archive's pinned SHA-256 and extracts the
-entire Windows distribution, including its Python runtime. It does not change
-your global APM, PATH, or PowerShell profile.
+entire distribution for the current platform, including its Python runtime.
+It does not change your global APM, PATH, or PowerShell profile.
 
 Use the wrapper in every exercise, even if a different `apm` is already installed.
 The wrapper keeps APM configuration and cache in the current project's ignored
@@ -149,9 +162,9 @@ in Azure Repos. Installation restores their package context and verifies the
 local package sources.
 
 ```powershell
-& .\scripts\apm.ps1 install --frozen --target copilot
+& ./scripts/apm.ps1 install --frozen --target copilot
 if ($LASTEXITCODE -ne 0) { throw 'The root context did not match its lockfile.' }
-& .\scripts\apm.ps1 audit --ci --policy .\apm-policy.yml
+& ./scripts/apm.ps1 audit --ci --policy ./apm-policy.yml
 if ($LASTEXITCODE -ne 0) { throw 'The root context failed audit.' }
 ```
 
@@ -159,11 +172,11 @@ Restore the second APM project as well:
 
 ```powershell
 $Repo = (Get-Location).Path
-Push-Location .\packages
+Push-Location ./packages
 try {
-    & "$Repo\scripts\apm.ps1" install --frozen --target copilot
+    & "$Repo/scripts/apm.ps1" install --frozen --target copilot
     if ($LASTEXITCODE -ne 0) { throw 'The second context did not match its lockfile.' }
-    & "$Repo\scripts\apm.ps1" audit --ci --policy "$Repo\apm-policy.yml"
+    & "$Repo/scripts/apm.ps1" audit --ci --policy "$Repo/apm-policy.yml"
     if ($LASTEXITCODE -ne 0) { throw 'The second context failed audit.' }
 }
 finally {

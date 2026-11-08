@@ -8,9 +8,9 @@
 ## 1. Inspect the consumer manifest before installing
 
 ```powershell
-Get-Content .\apm.yml
-Get-Content .\packages\webhook-playbook\apm.yml
-Get-Content .\packages\engineering-baseline\apm.yml
+Get-Content ./apm.yml
+Get-Content ./packages/webhook-playbook/apm.yml
+Get-Content ./packages/engineering-baseline/apm.yml
 ```
 
 Observe that the root explicitly targets `copilot` and has `includes: []`.
@@ -25,11 +25,11 @@ from the local checkout, not from a remote package host.
 ## 2. Restore the exact approved package content
 
 ```powershell
-& .\scripts\apm.ps1 install --frozen --target copilot
+& ./scripts/apm.ps1 install --frozen --target copilot
 if ($LASTEXITCODE -ne 0) { throw 'Do not continue with unexpected package drift.' }
-& .\scripts\apm.ps1 deps tree
+& ./scripts/apm.ps1 deps tree
 if ($LASTEXITCODE -ne 0) { throw 'Dependency inspection failed.' }
-& .\scripts\apm.ps1 deps list
+& ./scripts/apm.ps1 deps list
 if ($LASTEXITCODE -ne 0) { throw 'Package inspection failed.' }
 ```
 
@@ -60,7 +60,7 @@ Run:
 ```powershell
 npm run verify:starter
 if ($LASTEXITCODE -ne 0) { throw 'The required deployed context is missing or changed.' }
-& .\scripts\apm.ps1 audit --ci --policy .\apm-policy.yml
+& ./scripts/apm.ps1 audit --ci --policy ./apm-policy.yml
 if ($LASTEXITCODE -ne 0) { throw 'Context audit failed.' }
 ```
 

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
+import path from "node:path";
 import test from "node:test";
-import { apmTextDigest, digest, frontmatter } from "../lib.mjs";
+import { apmExecutable, apmTextDigest, digest, frontmatter, root } from "../lib.mjs";
 
 test("content digests cover exact bytes, not just filenames", () => {
   assert.equal(digest("a"), digest(Buffer.from("a")));
@@ -19,4 +20,20 @@ test("customization metadata accepts CRLF and validates a description", () => {
   );
   assert.throws(() => frontmatter("No frontmatter", "test.md"), /missing YAML/);
   assert.throws(() => frontmatter("---\nname: test\n---\nBody", "test.md"), /meaningful description/);
+});
+
+test("APM executable selection supports Windows and native Linux architectures", () => {
+  const config = { apmVersion: "0.35.0" };
+  for (const architecture of ["x64", "arm64"]) {
+    assert.equal(
+      apmExecutable(config, { platform: "win32", architecture }),
+      path.join(root, ".tools", "apm", "0.35.0", "apm-windows-x86_64", "apm.exe"),
+    );
+    assert.equal(
+      apmExecutable(config, { platform: "linux", architecture }),
+      path.join(root, ".tools", "apm", "0.35.0", `apm-linux-${architecture === "x64" ? "x86_64" : "arm64"}`, "apm"),
+    );
+  }
+  assert.throws(() => apmExecutable(config, { platform: "darwin", architecture: "arm64" }), /Linux dev container/);
+  assert.throws(() => apmExecutable(config, { platform: "linux", architecture: "ia32" }), /x64 or Arm64/);
 });

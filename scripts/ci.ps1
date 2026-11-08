@@ -41,7 +41,7 @@ try {
     Push-Location (Join-Path $root '.lab\release')
     try {
         Invoke-Checked -Command $wrapper -Arguments @('install', '--target', 'copilot')
-        Invoke-Checked -Command $wrapper -Arguments @('pack', '--format', 'claude-plugin', '--archive', '--output', '.\build')
+        Invoke-Checked -Command $wrapper -Arguments @('pack', '--format', 'claude-plugin', '--archive', '--output', './build')
     }
     finally {
         Pop-Location

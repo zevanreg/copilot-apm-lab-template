@@ -54,11 +54,18 @@ export async function walk(directory) {
   return files;
 }
 
+export function apmExecutable(config, { platform = process.platform, architecture = process.arch } = {}) {
+  assert.ok(["win32", "linux"].includes(platform), "Use Windows or the Linux dev container for this lab");
+  assert.ok(["x64", "arm64"].includes(architecture), "APM requires an x64 or Arm64 runtime");
+  const bundle = platform === "win32"
+    ? "apm-windows-x86_64"
+    : `apm-linux-${architecture === "x64" ? "x86_64" : "arm64"}`;
+  return path.join(root, ".tools", "apm", config.apmVersion, bundle, platform === "win32" ? "apm.exe" : "apm");
+}
+
 export async function runApm(args, { cwd = root, failure = false } = {}) {
   const config = JSON.parse(await readFile(path.join(root, "lab.config.json"), "utf8"));
-  const executable = path.join(
-    root, ".tools", "apm", config.apmVersion, "apm-windows-x86_64", "apm.exe",
-  );
+  const executable = apmExecutable(config);
   const result = spawnSync(executable, args, {
     cwd,
     encoding: "utf8",

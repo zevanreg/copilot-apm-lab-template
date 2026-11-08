@@ -22,8 +22,8 @@ If you already created your branch during setup, remain on that branch instead.
 Read both inert discussion files:
 
 ```powershell
-Get-Content .\fixtures\legacy-guidance\team-a.txt
-Get-Content .\fixtures\legacy-guidance\team-b.txt
+Get-Content ./fixtures/legacy-guidance/team-a.txt
+Get-Content ./fixtures/legacy-guidance/team-b.txt
 ```
 
 These are plain text discussion fixtures. They are not installed instructions,

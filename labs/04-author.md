@@ -105,7 +105,7 @@ Do not bump the baseline or root lab version for this domain-package feature.
 Before accepting the change into the lock, run:
 
 ```powershell
-& .\scripts\apm.ps1 install --frozen --target copilot
+& ./scripts/apm.ps1 install --frozen --target copilot
 $FrozenExit = $LASTEXITCODE
 if ($FrozenExit -eq 0) { throw 'Expected frozen mode to reject changed local package content.' }
 ```
@@ -119,12 +119,12 @@ the expected result.
 Now use a normal install because you intend to change the resolved content:
 
 ```powershell
-& .\scripts\apm.ps1 install --target copilot
+& ./scripts/apm.ps1 install --target copilot
 if ($LASTEXITCODE -ne 0) { throw 'Root package update failed.' }
 $Repo = (Get-Location).Path
-Push-Location .\packages
+Push-Location ./packages
 try {
-    & "$Repo\scripts\apm.ps1" install --target copilot
+    & "$Repo/scripts/apm.ps1" install --target copilot
     if ($LASTEXITCODE -ne 0) { throw 'Second-consumer update failed.' }
 }
 finally {
@@ -145,9 +145,9 @@ the upgrade procedure itself; heading checks cannot prove its quality.
 ## 7. Validate and review the deployment diff
 
 ```powershell
-& .\scripts\apm.ps1 compile --validate --target copilot
+& ./scripts/apm.ps1 compile --validate --target copilot
 if ($LASTEXITCODE -ne 0) { throw 'Customization validation failed.' }
-& .\scripts\apm.ps1 audit --ci --policy .\apm-policy.yml
+& ./scripts/apm.ps1 audit --ci --policy ./apm-policy.yml
 if ($LASTEXITCODE -ne 0) { throw 'Root audit failed.' }
 npm run check
 if ($LASTEXITCODE -ne 0) { throw 'A source, test, or documentation check failed.' }
@@ -173,10 +173,10 @@ Instead, prepare a curated source package containing the baseline and domain
 primitives, with no external or local dependency paths:
 
 ```powershell
-node .\scripts\prepare-release.mjs
+node ./scripts/prepare-release.mjs
 if ($LASTEXITCODE -ne 0) { throw 'Release preparation failed.' }
-Get-Content .\.lab\release\apm.yml
-Get-ChildItem -LiteralPath .\.lab\release\.apm -Recurse -File
+Get-Content ./.lab/release/apm.yml
+Get-ChildItem -LiteralPath ./.lab/release/.apm -Recurse -File
 ```
 
 Expected: `northstar-webhook-kit`, version 1.1.0, `includes: auto`, an empty APM
@@ -191,17 +191,17 @@ generated directory.
 
 ```powershell
 $Repo = (Get-Location).Path
-Push-Location .\.lab\release
+Push-Location ./.lab/release
 try {
-    & "$Repo\scripts\apm.ps1" install --target copilot
+    & "$Repo/scripts/apm.ps1" install --target copilot
     if ($LASTEXITCODE -ne 0) { throw 'Producer installation failed.' }
-    & "$Repo\scripts\apm.ps1" pack --format claude-plugin --archive --output .\build
+    & "$Repo/scripts/apm.ps1" pack --format claude-plugin --archive --output ./build
     if ($LASTEXITCODE -ne 0) { throw 'Bundle packing failed.' }
 }
 finally {
     Pop-Location
 }
-$Bundle = Join-Path $Repo '.lab\release\build\northstar-webhook-kit-1.1.0.zip'
+$Bundle = Join-Path $Repo '.lab/release/build/northstar-webhook-kit-1.1.0.zip'
 Get-Item -LiteralPath $Bundle
 Get-FileHash -LiteralPath $Bundle -Algorithm SHA256
 ```
@@ -219,20 +219,20 @@ by the `apm install <archive>` flow tested in this lab.
 Use the supplied empty manifest:
 
 ```powershell
-$BundleConsumer = Join-Path $Repo '.lab\bundle-consumer'
+$BundleConsumer = Join-Path $Repo '.lab/bundle-consumer'
 if (Test-Path -LiteralPath $BundleConsumer) {
     throw 'The demo consumer already exists. Inspect it before choosing a new exercise directory.'
 }
 New-Item -ItemType Directory -Path $BundleConsumer | Out-Null
-Copy-Item -LiteralPath .\fixtures\bundle-consumer.yml -Destination "$BundleConsumer\apm.yml"
+Copy-Item -LiteralPath ./fixtures/bundle-consumer.yml -Destination "$BundleConsumer/apm.yml"
 Push-Location $BundleConsumer
 try {
-    & "$Repo\scripts\apm.ps1" install $Bundle --target copilot
+    & "$Repo/scripts/apm.ps1" install $Bundle --target copilot
     if ($LASTEXITCODE -ne 0) { throw 'The bundle could not be installed.' }
-    & "$Repo\scripts\apm.ps1" audit --ci --policy "$Repo\apm-policy.yml"
+    & "$Repo/scripts/apm.ps1" audit --ci --policy "$Repo/apm-policy.yml"
     if ($LASTEXITCODE -ne 0) { throw 'Installed-bundle audit failed.' }
-    Get-Content .\.agents\skills\webhook-change\references\package-upgrade.md
-    Get-Content .\apm.yml
+    Get-Content ./.agents/skills/webhook-change/references/package-upgrade.md
+    Get-Content ./apm.yml
 }
 finally {
     Pop-Location

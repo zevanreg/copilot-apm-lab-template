@@ -9,7 +9,7 @@ credential access, or external tools are introduced.
 ## 1. Establish that the reviewed state is clean
 
 ```powershell
-& .\scripts\apm.ps1 audit --ci --policy .\apm-policy.yml
+& ./scripts/apm.ps1 audit --ci --policy ./apm-policy.yml
 if ($LASTEXITCODE -ne 0) { throw 'Start with a clean root audit.' }
 npm run verify:authoring
 if ($LASTEXITCODE -ne 0) { throw 'Finish the package-authoring checkpoint first.' }
@@ -24,9 +24,9 @@ it is not a complete organizational allowlist.
 ## 2. Inject one controlled deployed-file edit
 
 ```powershell
-node .\scripts\scenarios.mjs drift
+node ./scripts/scenarios.mjs drift
 if ($LASTEXITCODE -ne 0) { throw 'Drift scenario was not prepared.' }
-git --no-pager diff -- .github\instructions\webhooks.instructions.md
+git --no-pager diff -- .github/instructions/webhooks.instructions.md
 ```
 
 The helper first requires a clean audit, backs up the exact managed file, and
@@ -39,7 +39,7 @@ edited. Do not have Copilot "fix" the package or regenerate everything yet.
 ## 3. Require the drift audit to fail
 
 ```powershell
-& .\scripts\apm.ps1 audit --ci --policy .\apm-policy.yml
+& ./scripts/apm.ps1 audit --ci --policy ./apm-policy.yml
 $DriftExit = $LASTEXITCODE
 if ($DriftExit -eq 0) { throw 'A modified managed instruction must not pass the audit.' }
 ```
@@ -58,11 +58,11 @@ Consider:
 ## 4. Restore the exact previous deployed bytes
 
 ```powershell
-node .\scripts\scenarios.mjs restore-drift
+node ./scripts/scenarios.mjs restore-drift
 if ($LASTEXITCODE -ne 0) { throw 'Inspect the backup and managed file before restoring manually.' }
-& .\scripts\apm.ps1 install --frozen --target copilot
+& ./scripts/apm.ps1 install --frozen --target copilot
 if ($LASTEXITCODE -ne 0) { throw 'Frozen restoration failed.' }
-& .\scripts\apm.ps1 audit --ci --policy .\apm-policy.yml
+& ./scripts/apm.ps1 audit --ci --policy ./apm-policy.yml
 if ($LASTEXITCODE -ne 0) { throw 'The repaired state is still inconsistent.' }
 ```
 
@@ -76,8 +76,8 @@ intentionally update the lock, redeploy both consumers, and retest.
 ## 5. Read a proposed manifest command without executing it
 
 ```powershell
-Get-Content .\fixtures\proposed-scripts.yml
-Get-Content .\apm-policy.yml
+Get-Content ./fixtures/proposed-scripts.yml
+Get-Content ./apm-policy.yml
 ```
 
 The proposal adds a named script whose command is just `node --version`. It is
@@ -90,11 +90,11 @@ The point is to inspect and reject its declaration without executing it.
 ## 6. Prepare an isolated policy candidate
 
 ```powershell
-node .\scripts\scenarios.mjs prepare-policy
+node ./scripts/scenarios.mjs prepare-policy
 if ($LASTEXITCODE -ne 0) { throw 'Policy sandbox preparation failed.' }
 $Repo = (Get-Location).Path
-$PolicyConsumer = Join-Path $Repo '.lab\policy-consumer'
-Get-Content "$PolicyConsumer\apm.yml"
+$PolicyConsumer = Join-Path $Repo '.lab/policy-consumer'
+Get-Content "$PolicyConsumer/apm.yml"
 ```
 
 The helper copies reviewed package inputs and the lock into a marked sandbox,
@@ -109,9 +109,9 @@ Finish or clear that named exercise before repeating.
 ```powershell
 Push-Location $PolicyConsumer
 try {
-    & "$Repo\scripts\apm.ps1" install --target copilot
+    & "$Repo/scripts/apm.ps1" install --target copilot
     if ($LASTEXITCODE -ne 0) { throw 'Candidate installation failed before the intended local audit.' }
-    & "$Repo\scripts\apm.ps1" audit --ci --policy "$Repo\apm-policy.yml"
+    & "$Repo/scripts/apm.ps1" audit --ci --policy "$Repo/apm-policy.yml"
     $PolicyExit = $LASTEXITCODE
     if ($PolicyExit -eq 0) { throw 'The unreviewed scripts declaration must fail the explicit policy.' }
 }
@@ -132,7 +132,7 @@ exercise proves the actual CI audit rule, not a fictional runtime barrier.
 If your organization already has a stricter central policy and installation is
 blocked earlier, respect it. Ask the organizer to classify the result; do not
 set a policy-disable environment variable or pass `--no-policy` to bypass it.
-See the central-policy notes in [Azure DevOps setup](../docs/azure-devops.md).
+See the local and central-policy distinctions in [architecture](../docs/architecture.md#governance).
 
 ## 8. Repair the candidate, then prove the intended state passes
 
@@ -144,9 +144,9 @@ Repeat:
 ```powershell
 Push-Location $PolicyConsumer
 try {
-    & "$Repo\scripts\apm.ps1" install --target copilot
+    & "$Repo/scripts/apm.ps1" install --target copilot
     if ($LASTEXITCODE -ne 0) { throw 'Repaired candidate installation failed.' }
-    & "$Repo\scripts\apm.ps1" audit --ci --policy "$Repo\apm-policy.yml"
+    & "$Repo/scripts/apm.ps1" audit --ci --policy "$Repo/apm-policy.yml"
     if ($LASTEXITCODE -ne 0) { throw 'The repaired candidate still violates policy.' }
 }
 finally {
@@ -160,11 +160,11 @@ The only necessary policy repair was removing the unwanted declaration.
 ## 9. Clean up the named policy scenario and rerun the automated cases
 
 ```powershell
-node .\scripts\scenarios.mjs clear-policy
+node ./scripts/scenarios.mjs clear-policy
 if ($LASTEXITCODE -ne 0) { throw 'Sandbox cleanup refused; inspect its marker and path.' }
 npm run test:lab
 if ($LASTEXITCODE -ne 0) { throw 'A workflow assertion failed.' }
-& .\scripts\apm.ps1 audit --ci --policy .\apm-policy.yml
+& ./scripts/apm.ps1 audit --ci --policy ./apm-policy.yml
 if ($LASTEXITCODE -ne 0) { throw 'The real consumer must end clean.' }
 ```
 
